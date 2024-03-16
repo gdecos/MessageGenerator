@@ -1,5 +1,4 @@
 ﻿using Microsoft.CSharp;
-using SWIFT_ISO2022MessageGenerator.Helpers;
 using SwiftMXMessageGenerator.Helpers;
 using System;
 using System.CodeDom.Compiler;

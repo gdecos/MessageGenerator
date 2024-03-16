@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace SWIFT_ISO2022MessageGenerator.Helpers
+namespace SwiftMXMessageGenerator.Helpers
 {
     public static class ReflectionHelper
     {
