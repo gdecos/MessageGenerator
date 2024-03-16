@@ -1,5 +1,5 @@
 ﻿using Microsoft.CSharp;
-using SWIFT_ISO2022MessageGenerator.Helpers;
+using SwiftMXMessageGenerator.Helpers;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace SWIFT_ISO2022MessageGenerator
+namespace SwiftMXMessageGenerator
 {
     internal class LoadAndDeSerializeGeneratedXMLFiles
     {
@@ -89,7 +89,7 @@ namespace SWIFT_ISO2022MessageGenerator
                     //Console.WriteLine(string.Format("{0}", outXML));
                     Console.WriteLine(string.Format("\t {0}", "OK"));
 
-                    GC.Collect
+                    GC.Collect();
                 }
                 catch (Exception ex)
                 {

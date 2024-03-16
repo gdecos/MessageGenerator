@@ -1,5 +1,6 @@
 ﻿using Microsoft.CSharp;
 using SWIFT_ISO2022MessageGenerator.Helpers;
+using SwiftMXMessageGenerator.Helpers;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SWIFT_ISO2022MessageGenerator
+namespace SwiftMXMessageGenerator
 {
     internal class NVLPMessageCompilerAndGenerator
     {

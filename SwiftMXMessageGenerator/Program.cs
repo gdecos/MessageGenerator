@@ -1,4 +1,4 @@
-﻿namespace SWIFT_ISO2022MessageGenerator
+﻿namespace SwiftMXMessageGenerator
 {
     class Program
     {

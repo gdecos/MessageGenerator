@@ -1,4 +1,5 @@
 ﻿using SWIFT_ISO2022MessageGenerator.Helpers;
+using SwiftMXMessageGenerator.Helpers;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
-namespace SWIFT_ISO2022MessageGenerator
+namespace SwiftMXMessageGenerator
 {
     internal class DocumentMessageCompilerAndGenerator
     {

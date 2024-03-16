@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace SWIFT_ISO2022MessageGenerator.Helpers
+namespace SwiftMXMessageGenerator.Helpers
 {
     public static class FileHelpers
     {

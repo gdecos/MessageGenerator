@@ -1,12 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
-namespace SWIFT_ISO2022MessageGenerator
+namespace SWIFT_ISO2022MessageGenerator.Helpers
 {
     public static class ReflectionHelper
     {
@@ -743,7 +742,7 @@ namespace SWIFT_ISO2022MessageGenerator
 
                             XmlDocument xmlDocSPack = new XmlDocument();
                             XmlNode xmldocNode = xmlDocSPack.CreateXmlDeclaration("1.0", "", null);
-                            xmlDocSPack.AppendChild(xmldocNode);                           
+                            xmlDocSPack.AppendChild(xmldocNode);
 
                             //CHECK THIS
 

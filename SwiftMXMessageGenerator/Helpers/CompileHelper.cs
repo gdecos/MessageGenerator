@@ -1,7 +1,7 @@
 ﻿using Microsoft.CSharp;
 using System.CodeDom.Compiler;
 
-namespace SWIFT_ISO2022MessageGenerator.Helpers
+namespace SwiftMXMessageGenerator.Helpers
 {
     public class CompileHelper
     {
