@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace SwiftMXMessageGenerator
 {
@@ -26,7 +25,7 @@ namespace SwiftMXMessageGenerator
             List<string> files = new List<string>();
 
             files.AddRange(
-                Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*.cs", SearchOption.AllDirectories));           
+                Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*.cs", SearchOption.AllDirectories));
 
             Console.WriteLine($"Total Files: {files.Count}");
 
@@ -83,7 +82,7 @@ namespace SwiftMXMessageGenerator
                 {
                     Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
                     throw ex;
-                }                
+                }
             }
         }
     }

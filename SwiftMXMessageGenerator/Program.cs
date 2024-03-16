@@ -22,7 +22,7 @@ namespace SwiftMXMessageGenerator
             Ardalis.GuardClauses.Guard.Against.Null(configurationRoot);
 
             folderPath = configurationRoot.GetSection("FileLocationSettings").GetValue<string>("SwiftMXOutputLocation")!;
-            
+
             /************************************************************************************************/
             // Not Finished
             // generates xml info files based on enriched schemas (ISO 20022). 

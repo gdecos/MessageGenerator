@@ -38,7 +38,7 @@ namespace SwiftMXMessageGenerator.Helpers
             using (var filecontents = System.IO.File.OpenRead(file))
             {
                 var deserializedDocument = xmlSerializer.Deserialize(filecontents);
-                return (T) deserializedDocument;
+                return (T)deserializedDocument;
             }
         }
 

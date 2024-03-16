@@ -1,13 +1,10 @@
-﻿using Microsoft.CSharp;
-using SwiftMXMessageGenerator.Helpers;
+﻿using SwiftMXMessageGenerator.Helpers;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace SwiftMXMessageGenerator
@@ -20,7 +17,8 @@ namespace SwiftMXMessageGenerator
         private readonly int _maxFilesToGenerate = 5;
 
         public LoadAndDeSerializeGeneratedXMLFiles() => new LoadAndDeSerializeGeneratedXMLFiles(_filesBaseLocation);
-        public LoadAndDeSerializeGeneratedXMLFiles(string filesBaseLocation) {
+        public LoadAndDeSerializeGeneratedXMLFiles(string filesBaseLocation)
+        {
             _filesBaseLocation = filesBaseLocation;
         }
 

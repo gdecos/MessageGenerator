@@ -51,6 +51,6 @@ namespace SwiftMXMessageGenerator.Helpers
             provider.Dispose();
 
             return compileResults;
-        }        
+        }
     }
 }

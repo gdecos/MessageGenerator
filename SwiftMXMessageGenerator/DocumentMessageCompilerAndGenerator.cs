@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace SwiftMXMessageGenerator
 {
@@ -28,12 +27,12 @@ namespace SwiftMXMessageGenerator
 
             files.AddRange(
                 Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}")
-                    .Where(name => 
+                    .Where(name =>
                         !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\$ahV10", StringComparison.OrdinalIgnoreCase) &&
                         !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\ahV10", StringComparison.OrdinalIgnoreCase) &&
                         !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\head", StringComparison.OrdinalIgnoreCase) &&
                         !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\nvlp", StringComparison.OrdinalIgnoreCase)
-                     ));           
+                     ));
 
             var outputLocation = $@"{_filesBaseLocation}\{_xmlOutputFileLocation}";
             if (!System.IO.Directory.Exists(outputLocation))
@@ -97,7 +96,7 @@ namespace SwiftMXMessageGenerator
                 {
                     Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
                     throw ex;
-                }                
+                }
             }
         }
     }

@@ -1,11 +1,7 @@
 ﻿using SwiftMXMessageGenerator.Helpers;
 using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace SwiftMXMessageGenerator
 {
@@ -22,7 +18,7 @@ namespace SwiftMXMessageGenerator
         }
 
         public void Run()
-        {    
+        {
             var outputLocation = $@"{_filesBaseLocation}\{_xmlOutputFileLocation}";
             if (!System.IO.Directory.Exists(outputLocation))
             {
@@ -31,7 +27,7 @@ namespace SwiftMXMessageGenerator
 
             var localLibs = AssemblyHelper.GetAllDocumentTypes(Assembly.GetExecutingAssembly())
                 //.Where(w => w.)
-                .OrderBy(o=>o.FullName).ToList();
+                .OrderBy(o => o.FullName).ToList();
 
             Console.WriteLine($"LOCAL LIBS Total Files: {localLibs.Count}");
             Console.WriteLine($"========================================================================================");
@@ -75,7 +71,7 @@ namespace SwiftMXMessageGenerator
                 {
                     Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
                     throw ex;
-                }                
+                }
             }
         }
     }
