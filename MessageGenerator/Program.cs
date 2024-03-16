@@ -1,7 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using Microsoft.Extensions.Configuration;
 
-namespace SwiftMXMessageGenerator
+namespace MessageGenerator
 {
     class Program
     {
@@ -44,14 +44,32 @@ namespace SwiftMXMessageGenerator
 
 
             /************************************************************************************************/
-            //compiles at runtime and generates assemblies
+            // MX - compiles at runtime and generates assemblies
             /* NOTE : After this - RUN ProcessAsseblies BAT to create serializers*/
-            var asseblyGenerator = new MessageAssemblyGenerator();
-            //asseblyGenerator.Run();
+            var mxMessageAssemblyGenerator = new MXMessageAssemblyGenerator();
+            //mxMessageAssemblyGenerator.Run();
 
             //return;
             /************************************************************************************************/
 
+            /************************************************************************************************/
+            // FIX - compiles at runtime and generates assemblies
+            /* NOTE : After this - RUN ProcessAsseblies BAT to create serializers*/
+            var fiMessageAssemblyGenerator = new FIXMessageAssemblyGenerator();
+            //fiMessageAssemblyGenerator.Run();
+
+            //return;
+            /************************************************************************************************/
+
+            // FIX M
+            /************************************************************************************************/
+            //compiles at runtime and generates full message (rnd)
+
+            var fixGenerator = new FIXMessageCompilerAndGenerator();
+            fixGenerator.Run();
+
+            //return;
+            /************************************************************************************************/
 
             /************************************************************************************************/
             //dynamically deserializes the messages created by the code CompileAllFiles

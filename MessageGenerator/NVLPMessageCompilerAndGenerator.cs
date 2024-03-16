@@ -1,38 +1,29 @@
 ﻿using Microsoft.CodeAnalysis;
-using SwiftMXMessageGenerator.Helpers;
+using MessageGenerator.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace SwiftMXMessageGenerator
+namespace MessageGenerator
 {
-    internal class DocumentMessageCompilerAndGenerator
+    internal class NVLPMessageCompilerAndGenerator
     {
         private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\ISO-20022";
         private readonly string _csFilesLocation = $@"cs";
         private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}";
         private readonly int _maxFilesToGenerate = 5;
 
-        public DocumentMessageCompilerAndGenerator() => new DocumentMessageCompilerAndGenerator(_filesBaseLocation);
-        public DocumentMessageCompilerAndGenerator(string filesBaseLocation)
+        public NVLPMessageCompilerAndGenerator() => new NVLPMessageCompilerAndGenerator(_filesBaseLocation);
+        public NVLPMessageCompilerAndGenerator(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
         }
 
         public void Run()
         {
-            List<string> files = new List<string>();
-
-            files.AddRange(
-                Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}")
-                    .Where(name =>
-                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\$ahV10", StringComparison.OrdinalIgnoreCase) &&
-                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\ahV10", StringComparison.OrdinalIgnoreCase) &&
-                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\head", StringComparison.OrdinalIgnoreCase) &&
-                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\nvlp", StringComparison.OrdinalIgnoreCase)
-                     ));
+            List<string> files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*nvlp*.cs", SearchOption.AllDirectories).ToList();
 
             var outputLocation = $@"{_filesBaseLocation}\{_xmlOutputFileLocation}";
             if (!System.IO.Directory.Exists(outputLocation))
@@ -40,7 +31,7 @@ namespace SwiftMXMessageGenerator
                 System.IO.Directory.CreateDirectory(outputLocation);
             }
 
-            Console.WriteLine($"DOCUMENT Total Files: {files.Count}");
+            Console.WriteLine($"NVLP Total Files: {files.Count}");
 
             int idx = 0;
 
@@ -70,7 +61,7 @@ namespace SwiftMXMessageGenerator
 
                     Assembly assembly = compileResults.Item2;
 
-                    var entryPoint = AssemblyHelper.GetDocumentTypes(assembly);
+                    var entryPoint = AssemblyHelper.GetNVLPTypes(assembly);
 
                     Console.WriteLine(string.Format("\t {0}", "Creating Instance"));
                     Console.WriteLine(string.Format("\t {0}", entryPoint.FullName));
@@ -102,7 +93,6 @@ namespace SwiftMXMessageGenerator
                         Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
                         //throw ex;
                     }
-
                 }
             }
         }

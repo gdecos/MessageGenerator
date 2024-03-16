@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace SwiftMXMessageGenerator.Helpers
+namespace MessageGenerator.Helpers
 {
     public class CompileHelper
     {

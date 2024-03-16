@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace SwiftMXMessageGenerator.Helpers
+namespace MessageGenerator.Helpers
 {
     public class AssemblyHelper
     {
@@ -62,5 +62,19 @@ namespace SwiftMXMessageGenerator.Helpers
 
             return types;
         }
+
+        public static IEnumerable<Type> GetAllFIXDocumentTypes(Assembly assembly)
+        {
+            var types = from t in assembly.GetTypes()
+                        where t.IsClass && (
+                        1 == 2
+                        || t.Name == "FIXML"
+                        )
+                        select t;
+
+            return types;
+        }
+
+        internal static Type GetFIXTypes(Assembly assembly) => GetAllFIXDocumentTypes(assembly).FirstOrDefault();
     }
 }

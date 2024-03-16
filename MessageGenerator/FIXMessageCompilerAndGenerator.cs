@@ -1,31 +1,29 @@
 ﻿using Microsoft.CodeAnalysis;
-using SwiftMXMessageGenerator.Helpers;
+using MessageGenerator.Helpers;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace SwiftMXMessageGenerator
+namespace MessageGenerator
 {
-    internal class HEADMessageCompilerAndGenerator
+    internal class FIXMessageCompilerAndGenerator
     {
-        private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\ISO-20022";
+        private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\FIX";
         private readonly string _csFilesLocation = $@"cs";
         private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}";
         private readonly int _maxFilesToGenerate = 5;
 
-        public HEADMessageCompilerAndGenerator() => new HEADMessageCompilerAndGenerator(_filesBaseLocation);
-        public HEADMessageCompilerAndGenerator(string filesBaseLocation)
+        public FIXMessageCompilerAndGenerator() => new NVLPMessageCompilerAndGenerator(_filesBaseLocation);
+        public FIXMessageCompilerAndGenerator(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
         }
 
         public void Run()
         {
-            List<string> files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*head*.cs", SearchOption.AllDirectories).ToList();
-            files.AddRange(Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*ahv10*.cs", SearchOption.AllDirectories));
+            List<string> files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*.cs", SearchOption.AllDirectories).ToList();
 
             var outputLocation = $@"{_filesBaseLocation}\{_xmlOutputFileLocation}";
             if (!System.IO.Directory.Exists(outputLocation))
@@ -33,7 +31,7 @@ namespace SwiftMXMessageGenerator
                 System.IO.Directory.CreateDirectory(outputLocation);
             }
 
-            Console.WriteLine($"HEAD Total Files: {files.Count}");
+            Console.WriteLine($"FIX Total Files: {files.Count}");
 
             int idx = 0;
 
@@ -63,7 +61,7 @@ namespace SwiftMXMessageGenerator
 
                     Assembly assembly = compileResults.Item2;
 
-                    var entryPoint = AssemblyHelper.GetBAHEADERTypes(assembly);
+                    var entryPoint = AssemblyHelper.GetFIXTypes(assembly);
 
                     Console.WriteLine(string.Format("\t {0}", "Creating Instance"));
                     Console.WriteLine(string.Format("\t {0}", entryPoint.FullName));
@@ -83,7 +81,7 @@ namespace SwiftMXMessageGenerator
                             method = method.MakeGenericMethod(objectType);
                         var documentObj = method.Invoke(myObj, null);
 
-                        System.Reflection.MethodInfo saveXMLMethod = typeof(FileHelpers).GetMethod("SaveXmlFile");
+                        System.Reflection.MethodInfo saveXMLMethod = typeof(FileHelpers).GetMethod("SaveXmlFile_FIX");
                         if (saveXMLMethod.IsGenericMethod)
                             saveXMLMethod = saveXMLMethod.MakeGenericMethod(objectType);
                         var invokeMethodSaveXmlFile = saveXMLMethod.Invoke(objectType, new object[] { documentObj, filename, outputLocation });
@@ -93,8 +91,11 @@ namespace SwiftMXMessageGenerator
                     catch (Exception ex)
                     {
                         Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
-                        throw ex;
+                        Console.WriteLine(string.Format("\t {0}", ex.InnerException.Message));
+                        Console.WriteLine(string.Format("\t {0}", ex.InnerException.InnerException.Message));
+                        //throw ex;
                     }
+                    break;
                 }
             }
         }

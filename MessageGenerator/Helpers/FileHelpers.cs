@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
+using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 
-namespace SwiftMXMessageGenerator.Helpers
+namespace MessageGenerator.Helpers
 {
     public static class FileHelpers
     {
@@ -45,6 +47,24 @@ namespace SwiftMXMessageGenerator.Helpers
         public static void SaveXmlFile<T>(T t, string fileName, string filePath)
         {
             var outputLocation = $@"{filePath}\{fileName}.xml";
+            System.Xml.Serialization.XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            using (System.IO.FileStream file = System.IO.File.Create(outputLocation))
+            {
+                xmlSerializer.Serialize(file, t);
+            }
+        }
+
+        public static void SaveXmlFile_FIX<T>(T t, string fileName, string filePath)
+        {
+            var outputLocation = $@"{filePath}\{fileName}.xml";
+            var settings = new XmlWriterSettings
+            {
+                OmitXmlDeclaration = false,
+                Indent = true,
+                NewLineOnAttributes = false,
+                Encoding = Encoding.UTF8,                
+            };
+
             System.Xml.Serialization.XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
             using (System.IO.FileStream file = System.IO.File.Create(outputLocation))
             {

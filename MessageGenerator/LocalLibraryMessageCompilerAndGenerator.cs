@@ -1,9 +1,9 @@
-﻿using SwiftMXMessageGenerator.Helpers;
+﻿using MessageGenerator.Helpers;
 using System;
 using System.Linq;
 using System.Reflection;
 
-namespace SwiftMXMessageGenerator
+namespace MessageGenerator
 {
     internal class LocalLibraryMessageCompilerAndGenerator
     {

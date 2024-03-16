@@ -2,12 +2,12 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
-    <RootNamespace>SwiftMXMessageGenerator</RootNamespace>
-    <AssemblyName>SwiftMXMessageGenerator</AssemblyName>
+    <RootNamespace>MessageGenerator</RootNamespace>
+    <AssemblyName>MessageGenerator</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyTitle>SwiftMXMessageGenerator</AssemblyTitle>
-    <Product>SwiftMXMessageGenerator</Product>
-    <Copyright>Copyright ©  2017</Copyright>
+    <AssemblyTitle>MessageGenerator</AssemblyTitle>
+    <Product>MessageGenerator</Product>
+    <Copyright>Copyright Orama Technology LLC ©2017</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
   </PropertyGroup>

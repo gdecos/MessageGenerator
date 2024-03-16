@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace SwiftMXMessageGenerator.Helpers
+namespace MessageGenerator.Helpers
 {
     public static class CustomSerializer
     {

@@ -6,7 +6,7 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace SwiftMXMessageGenerator
+namespace MessageGenerator
 {
     public static class ExtractSwiftMessageInfoFromEnriched
     {

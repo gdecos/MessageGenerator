@@ -1,21 +1,21 @@
 ﻿using Microsoft.CodeAnalysis;
-using SwiftMXMessageGenerator.Helpers;
+using MessageGenerator.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace SwiftMXMessageGenerator
+namespace MessageGenerator
 {
-    internal class MessageAssemblyGenerator
+    internal class MXMessageAssemblyGenerator
     {
         private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\ISO-20022";
         private readonly string _csFilesLocation = $@"cs";
         private readonly int _maxFilesToGenerate = 5;
 
-        public MessageAssemblyGenerator() => new MessageAssemblyGenerator(_filesBaseLocation);
-        public MessageAssemblyGenerator(string filesBaseLocation)
+        public MXMessageAssemblyGenerator() => new MXMessageAssemblyGenerator(_filesBaseLocation);
+        public MXMessageAssemblyGenerator(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
         }

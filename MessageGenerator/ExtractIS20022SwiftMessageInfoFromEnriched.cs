@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace SwiftMXMessageGenerator
+namespace MessageGenerator
 {
     public static class ExtractIS20022SwiftMessageInfoFromEnriched
     {

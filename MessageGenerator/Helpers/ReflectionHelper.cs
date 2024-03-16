@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace SwiftMXMessageGenerator.Helpers
+namespace MessageGenerator.Helpers
 {
     public static class ReflectionHelper
     {
@@ -928,6 +928,11 @@ namespace SwiftMXMessageGenerator.Helpers
                         case "System.Byte":
                             if (property.CanWrite)
                                 property.SetValue(obj, Byte.MaxValue);
+                            break;
+                        //FIX
+                        case "System.Single":
+                            if (property.CanWrite)
+                                property.SetValue(obj, new Single());
                             break;
                         default:
                             throw new Exception(string.Format("Type: {0} Not handled", propertyType.FullName));
