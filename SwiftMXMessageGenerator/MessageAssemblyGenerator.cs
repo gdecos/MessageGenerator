@@ -1,6 +1,6 @@
-﻿using SwiftMXMessageGenerator.Helpers;
+﻿using Microsoft.CodeAnalysis;
+using SwiftMXMessageGenerator.Helpers;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -43,45 +43,51 @@ namespace SwiftMXMessageGenerator
 
                 var compileResults = CompileHelper.CompileInMemoryFromSource(fileContents);
 
-                foreach (CompilerError ce in compileResults.Errors)
+                if (compileResults.Item1 == false)
                 {
-                    if (ce.IsWarning) continue;
-                    Console.WriteLine("{5}\t{0} ({1},{2}) [{3}] {4}", ce.FileName, ce.Line, ce.Column, ce.ErrorNumber, ce.ErrorText, ce.IsWarning ? "WARN" : "ERROR");
-                }
+                    IEnumerable<Diagnostic> failures = compileResults.Item3.Where(diagnostic =>
+                        diagnostic.IsWarningAsError ||
+                        diagnostic.Severity == DiagnosticSeverity.Error ||
+                        diagnostic.Severity == DiagnosticSeverity.Info);
 
-                if (compileResults.Errors.Count > 0)
-                {
+                    foreach (Diagnostic diagnostic in failures)
+                    {
+                        Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                    }
+
                     throw new Exception("Complie Error");
                 }
-
-                Console.WriteLine($"[{++idx}] {file}");
-
-                Assembly assembly = compileResults.CompiledAssembly;
-
-                var entryPoint = AssemblyHelper.GetAllDocumentTypes(assembly).First();
-
-                Console.WriteLine(string.Format("\t {0}", "Creating PHYSICAL ASSEMBLY FROM SOURCE"));
-                Console.WriteLine(string.Format("\t {0}", entryPoint.FullName));
-                Console.WriteLine(string.Format("\t {0}", OutputAssemblyFile));
-
-                var physicalAsseblyCompilerResults = CompileHelper.CompileToAssemblyFromSource(fileContents, entryPoint.Name, OutputAssemblyFile);
-
-                try
+                else
                 {
-                    var allTypes = physicalAsseblyCompilerResults.CompiledAssembly.GetTypes().Select(s => new { Name = s.Name, FullName = s.FullName }).ToList();
-                    string filenameJson = entryPoint.FullName.Replace(".DOCUMENT", "").ToString();
+                    Console.WriteLine($"[{++idx}] {file}");
 
-                    System.Reflection.MethodInfo methodSaveJSON = typeof(FileHelpers).GetMethod("SaveJSONFile");
-                    if (methodSaveJSON.IsGenericMethod)
-                        methodSaveJSON = methodSaveJSON.MakeGenericMethod(allTypes.GetType());
-                    var invokeMethodSaveJSONFile = methodSaveJSON.Invoke(allTypes, new object[] { allTypes, filenameJson, fileLocationTypesInfoJSON });
+                    Assembly assembly = compileResults.Item2;
 
-                    Console.WriteLine(string.Format("\t {0}", "OK"));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
-                    throw ex;
+                    var entryPoint = AssemblyHelper.GetAllDocumentTypes(assembly).First();
+
+                    Console.WriteLine(string.Format("\t {0}", "Creating PHYSICAL ASSEMBLY FROM SOURCE"));
+                    Console.WriteLine(string.Format("\t {0}", entryPoint.FullName));
+                    Console.WriteLine(string.Format("\t {0}", OutputAssemblyFile));
+
+                    var physicalAsseblyCompilerResults = CompileHelper.CompileToAssemblyFromSource(fileContents, entryPoint.Name, OutputAssemblyFile);
+
+                    try
+                    {
+                        var allTypes = assembly.GetTypes().Select(s => new { Name = s.Name, FullName = s.FullName }).ToList();
+                        string filenameJson = entryPoint.FullName.Replace(".DOCUMENT", "").ToString();
+
+                        System.Reflection.MethodInfo methodSaveJSON = typeof(FileHelpers).GetMethod("SaveJSONFile");
+                        if (methodSaveJSON.IsGenericMethod)
+                            methodSaveJSON = methodSaveJSON.MakeGenericMethod(allTypes.GetType());
+                        var invokeMethodSaveJSONFile = methodSaveJSON.Invoke(allTypes, new object[] { allTypes, filenameJson, fileLocationTypesInfoJSON });
+
+                        Console.WriteLine(string.Format("\t {0}", "OK"));
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
+                        throw ex;
+                    }
                 }
             }
         }

@@ -47,7 +47,7 @@ namespace SwiftMXMessageGenerator
             //compiles at runtime and generates assemblies
             /* NOTE : After this - RUN ProcessAsseblies BAT to create serializers*/
             var asseblyGenerator = new MessageAssemblyGenerator();
-            ////asseblyGenerator.Run();
+            //asseblyGenerator.Run();
 
             //return;
             /************************************************************************************************/
@@ -57,7 +57,7 @@ namespace SwiftMXMessageGenerator
             //dynamically deserializes the messages created by the code CompileAllFiles
 
             var loadAndDeSerializeGeneratedXMLFiles = new LoadAndDeSerializeGeneratedXMLFiles();
-            //////loadAndDeSerializeGeneratedXMLFiles.Run();
+            loadAndDeSerializeGeneratedXMLFiles.Run();
 
             //return;
             /************************************************************************************************/

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace SwiftMXMessageGenerator.Helpers
 {
@@ -154,9 +155,9 @@ namespace SwiftMXMessageGenerator.Helpers
                     XmlNode xmldocNode = xmlDocSPack.CreateXmlDeclaration("1.0", "", null);
                     xmlDocSPack.AppendChild(xmldocNode);
 
-                    XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("XmlLinkedNode"));
-                    mainDocNode.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                    mainDocNode.SetAttribute("xmlns", RootNameSpace);
+                    XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("XmlLinkedNode"), namespaceURI: RootNameSpace);
+                    //mainDocNode.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                    //mainDocNode.SetAttribute("xmlns", RootNameSpace);
 
                     var newAttr = xmlDocSPack.CreateAttribute("Attribute1");
                     newAttr.InnerText = "val for Attribute Here";
@@ -281,9 +282,9 @@ namespace SwiftMXMessageGenerator.Helpers
                             XmlNode xmldocNode = xmlDocSPack.CreateXmlDeclaration("1.0", "", null);
                             xmlDocSPack.AppendChild(xmldocNode);
 
-                            XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName(item.Name));
+                            XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName(item.Name), namespaceURI: RootNameSpace);
                             mainDocNode.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                            mainDocNode.SetAttribute("xmlns", RootNameSpace);
+                            //mainDocNode.SetAttribute("xmlns", RootNameSpace);
 
                             var newAttr = xmlDocSPack.CreateAttribute("Attribute1");
                             newAttr.InnerText = "Attribute Value";
@@ -511,9 +512,9 @@ namespace SwiftMXMessageGenerator.Helpers
                                         XmlNode xmldocNode = xmlDocSPack.CreateXmlDeclaration("1.0", "", null);
                                         xmlDocSPack.AppendChild(xmldocNode);
 
-                                        XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName(property.Name));
+                                        XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName(property.Name), namespaceURI: RootNameSpace);
                                         mainDocNode.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                                        mainDocNode.SetAttribute("xmlns", RootNameSpace);
+                                        //mainDocNode.SetAttribute("xmlns", RootNameSpace);
 
                                         var newAttr = xmlDocSPack.CreateAttribute("Attribute1");
                                         newAttr.InnerText = "value 1";
@@ -704,9 +705,9 @@ namespace SwiftMXMessageGenerator.Helpers
                                         XmlNode xmldocNode1 = xmlDocSPack1.CreateXmlDeclaration("1.0", "", null);
                                         xmlDocSPack1.AppendChild(xmldocNode1);
 
-                                        XmlElement mainDocNode1 = xmlDocSPack1.CreateElement(System.Xml.XmlConvert.EncodeName(property.Name));
+                                        XmlElement mainDocNode1 = xmlDocSPack1.CreateElement(System.Xml.XmlConvert.EncodeName(property.Name), namespaceURI: RootNameSpace);
                                         mainDocNode1.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                                        mainDocNode1.SetAttribute("xmlns", RootNameSpace);
+                                        //mainDocNode1.SetAttribute("xmlns", RootNameSpace);
 
                                         var newAttr1 = xmlDocSPack1.CreateAttribute("Attribute1");
                                         newAttr1.InnerText = "SomeValue";
@@ -743,37 +744,64 @@ namespace SwiftMXMessageGenerator.Helpers
                             XmlNode xmldocNode = xmlDocSPack.CreateXmlDeclaration("1.0", "", null);
                             xmlDocSPack.AppendChild(xmldocNode);
 
+                            XNamespace docNamespace = RootNameSpace;
+
                             //CHECK THIS
 
+                            var sampleHeader = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_02_20_0849\Swift.ISO20022.APPLICATIONHEADER.v10.ApplicationHeader-20240220 084911 PM.xml";
+                            var sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_02_20_0849\Swift.ISO20022.ACMT.v006_001_02.Document-20240220 084922 PM.xml";
                             if (property.Name == "Hdr")
                             {
+                                /*
+                                XNamespace headNS = "urn:iso:std:iso:20022:tech:xsd:head.001.001.03";
+                                XElement root = new XElement(docNamespace + "AppHdr",
+                                    new XAttribute("xmlns", headNS),
+                                    new XAttribute(XNamespace.Xmlns + "Hdr", headNS),
+                                    new XElement(headNS + "Child",
+                                        new XElement(docNamespace + "DifferentChild", "other content")
+                                    ),
+                                    new XElement(headNS + "Child2", "c2 content"),
+                                    new XElement(docNamespace + "Child3", "c3 content")
+                                );
+                                var reader = root.CreateReader();
+                                reader.MoveToContent();
+                                xmlDocSPack.LoadXml(reader.ReadOuterXml());
+                                */
+
                                 //AppHdr
                                 //urn:iso:std:iso:20022:tech:xsd:head.001.001.03
-                                XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("AppHdr"));
-                                mainDocNode.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                                //mainDocNode.SetAttribute("xmlns", RootNameSpace);
-                                mainDocNode.SetAttribute("xmlns", "urn:iso:std:iso:20022:tech:xsd:head.001.001.03");
+                                XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("AppHdr"), namespaceURI: RootNameSpace);
+                                //mainDocNode.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                                /////////////////////////mainDocNode.SetAttribute("xmlns", RootNameSpace);
+                                //mainDocNode.SetAttribute("xmlns", "urn:iso:std:iso:20022:tech:xsd:head.001.001.03");
 
                                 //var newAttr = xmlDocSPack.CreateAttribute("Attribute1");
                                 //newAttr.InnerText = "New Attribute Value";
                                 //mainDocNode.Attributes.Append(newAttr);
 
                                 xmlDocSPack.AppendChild(mainDocNode);
+
+                                xmlDocSPack = new XmlDocument();
+                                xmlDocSPack.Load(sampleHeader);
+
                             }
                             else if (property.Name == "Doc")
                             {
                                 //Document
                                 //urn:swift:xsd:pain.998.001.03
-                                XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("Document"));
-                                mainDocNode.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-                                //mainDocNode.SetAttribute("xmlns", RootNameSpace);
-                                mainDocNode.SetAttribute("xmlns", "urn:swift:xsd:pain.998.001.03");
+                                XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("Document"), namespaceURI: RootNameSpace);
+                                //mainDocNode.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                                /////////////////////////mainDocNode.SetAttribute("xmlns", RootNameSpace);
+                                //mainDocNode.SetAttribute("xmlns", "urn:swift:xsd:pain.998.001.03");
 
                                 //var newAttr = xmlDocSPack.CreateAttribute("Attribute1");
                                 //newAttr.InnerText = "New Attribute Value";
                                 //mainDocNode.Attributes.Append(newAttr);
 
                                 xmlDocSPack.AppendChild(mainDocNode);
+
+                                xmlDocSPack = new XmlDocument();
+                                xmlDocSPack.Load(sampleMessage);
                             }
                             else
                             {
@@ -896,6 +924,10 @@ namespace SwiftMXMessageGenerator.Helpers
                         case "System.TimeSpan":
                             if (property.CanWrite)
                                 property.SetValue(obj, DateTime.UtcNow);
+                            break;
+                        case "System.Byte":
+                            if (property.CanWrite)
+                                property.SetValue(obj, Byte.MaxValue);
                             break;
                         default:
                             throw new Exception(string.Format("Type: {0} Not handled", propertyType.FullName));

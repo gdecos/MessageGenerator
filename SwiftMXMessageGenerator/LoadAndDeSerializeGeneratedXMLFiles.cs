@@ -1,4 +1,5 @@
-﻿using SwiftMXMessageGenerator.Helpers;
+﻿using Microsoft.CodeAnalysis;
+using SwiftMXMessageGenerator.Helpers;
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace SwiftMXMessageGenerator
 
         public void Run()
         {
-            List<string> files = Directory.GetFiles($@"{_filesBaseLocation}\{_xmlFileLocation}", "*.xml", SearchOption.AllDirectories).ToList();
+            List<string> files = Directory.GetFiles($@"{_filesBaseLocation}\{_xmlFileLocation}", "*.xml", SearchOption.AllDirectories).ToList().OrderBy(x => x).ToList();
 
             Console.WriteLine($"XML Total Files: {files.Count}");
 
@@ -49,50 +50,58 @@ namespace SwiftMXMessageGenerator
 
                 var compileResults = CompileHelper.CompileInMemoryFromSource(fileContents);
 
-                foreach (CompilerError ce in compileResults.Errors)
+                if (compileResults.Item1 == false)
                 {
-                    if (ce.IsWarning) continue;
-                    Console.WriteLine("{5}\t{0} ({1},{2}) [{3}] {4}", ce.FileName, ce.Line, ce.Column, ce.ErrorNumber, ce.ErrorText, ce.IsWarning ? "WARN" : "ERROR");
-                }
+                    IEnumerable<Diagnostic> failures = compileResults.Item3.Where(diagnostic =>
+                        diagnostic.IsWarningAsError ||
+                        diagnostic.Severity == DiagnosticSeverity.Error ||
+                        diagnostic.Severity == DiagnosticSeverity.Info);
 
-                if (compileResults.Errors.Count > 0)
-                {
+                    foreach (Diagnostic diagnostic in failures)
+                    {
+                        Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
+                    }
+
                     throw new Exception("Complie Error");
                 }
-
-                Assembly assembly = compileResults.CompiledAssembly;
-
-                var entryPoint = AssemblyHelper.GetAllDocumentTypes(assembly).First();
-
-                Console.WriteLine(string.Format("\t {0}", "Creating Instance"));
-                Console.WriteLine(string.Format("\t {0}", entryPoint.FullName));
-
-                var myObj = Activator.CreateInstance(entryPoint);
-
-                try
+                else
                 {
-                    Type objectType = myObj.GetType();
+                    Console.WriteLine($"[{++idx}] {file}");
 
-                    System.Reflection.MethodInfo methodGetDeserializedXMLDocument = typeof(FileHelpers).GetMethod("GetDeserializedXMLDocument");
-                    if (methodGetDeserializedXMLDocument.IsGenericMethod)
-                        methodGetDeserializedXMLDocument = methodGetDeserializedXMLDocument.MakeGenericMethod(myObj.GetType());
-                    var ISODocument = methodGetDeserializedXMLDocument.Invoke(objectType, new object[] { myObj, file });
+                    Assembly assembly = compileResults.Item2;
 
-                    System.Reflection.MethodInfo methodGetXML = typeof(FileHelpers).GetMethod("GetXML");
-                    if (methodGetXML.IsGenericMethod)
-                        methodGetXML = methodGetXML.MakeGenericMethod(ISODocument.GetType());
-                    var outXML = methodGetXML.Invoke(objectType, new object[] { ISODocument });
+                    var entryPoint = AssemblyHelper.GetAllDocumentTypes(assembly).First();
+
+                    Console.WriteLine(string.Format("\t {0}", "Creating Instance"));
+                    Console.WriteLine(string.Format("\t {0}", entryPoint.FullName));
+
+                    var myObj = Activator.CreateInstance(entryPoint);
+
+                    try
+                    {
+                        Type objectType = myObj.GetType();
+
+                        System.Reflection.MethodInfo methodGetDeserializedXMLDocument = typeof(FileHelpers).GetMethod("GetDeserializedXMLDocument");
+                        if (methodGetDeserializedXMLDocument.IsGenericMethod)
+                            methodGetDeserializedXMLDocument = methodGetDeserializedXMLDocument.MakeGenericMethod(myObj.GetType());
+                        var ISODocument = methodGetDeserializedXMLDocument.Invoke(objectType, new object[] { myObj, file });
+
+                        System.Reflection.MethodInfo methodGetXML = typeof(FileHelpers).GetMethod("GetXML");
+                        if (methodGetXML.IsGenericMethod)
+                            methodGetXML = methodGetXML.MakeGenericMethod(ISODocument.GetType());
+                        var outXML = methodGetXML.Invoke(objectType, new object[] { ISODocument });
 
 
-                    //Console.WriteLine(string.Format("{0}", outXML));
-                    Console.WriteLine(string.Format("\t {0}", "OK"));
+                        //Console.WriteLine(string.Format("{0}", outXML));
+                        Console.WriteLine(string.Format("\t {0}", "OK"));
 
-                    GC.Collect();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
-                    throw ex;
+                        GC.Collect();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
+                        throw ex;
+                    }
                 }
             }
         }

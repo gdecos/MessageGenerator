@@ -519,7 +519,7 @@ namespace SwiftMXMessageGenerator
 
                                     swiftField.MetaType = metaType?.Value;
                                     swiftField.FinFormat = finFormat?.Value;
-                                    swiftField.MinLength = minLength?.Value; ;
+                                    swiftField.MinLength = minLength?.Value;
                                     swiftField.MaxLength = maxLength?.Value;
                                     swiftField.Pattern = pattern?.Value;
 
