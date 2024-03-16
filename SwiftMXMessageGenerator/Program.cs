@@ -1,12 +1,28 @@
-﻿namespace SwiftMXMessageGenerator
+﻿using Ardalis.GuardClauses;
+using Microsoft.Extensions.Configuration;
+
+namespace SwiftMXMessageGenerator
 {
     class Program
     {
-        static string folderPath = @"D:\Swift Messaging\_ouput\ISO-20022";
+        private static IConfigurationRoot configurationRoot;
+        private static string folderPath;
+        private static void Configure()
+        {
+            configurationRoot = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
+                .Build();
+        }
 
         static void Main(string[] args)
         {
+            Configure();
 
+            Ardalis.GuardClauses.Guard.Against.Null(configurationRoot);
+
+            folderPath = configurationRoot.GetSection("FileLocationSettings").GetValue<string>("SwiftMXOutputLocation")!;
+            
             /************************************************************************************************/
             // Not Finished
             // generates xml info files based on enriched schemas (ISO 20022). 
