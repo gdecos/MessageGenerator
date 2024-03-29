@@ -6,7 +6,6 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace MessageGenerator.Helpers
@@ -51,21 +50,20 @@ namespace MessageGenerator.Helpers
 
                 if (!result.Success)
                 {
-                    return new Tuple<Boolean, Assembly, IEnumerable<Diagnostic>>(false, assembly, result.Diagnostics);
+                    return new Tuple<bool, Assembly, IEnumerable<Diagnostic>>(result.Success, assembly, result.Diagnostics);
                 }
                 else
                 {
                     ms.Seek(0, SeekOrigin.Begin);
                     assembly = Assembly.Load(ms.ToArray());
 
-                    return new Tuple<Boolean, Assembly, IEnumerable<Diagnostic>>(true, assembly, result.Diagnostics);
+                    return new Tuple<bool, Assembly, IEnumerable<Diagnostic>>(result.Success, assembly, result.Diagnostics);
                 }
             }
         }
 
         internal static Tuple<Boolean, IEnumerable<Diagnostic>> CompileToAssemblyFromSource(string fileContents, string mainClass, string outputAssemblyFile)
         {
-            Assembly assembly = null!;
             var runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
             string assemblyName = mainClass;
 
@@ -93,20 +91,9 @@ namespace MessageGenerator.Helpers
                 options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary) { }
                                 .WithOptimizationLevel(OptimizationLevel.Release));
 
-
             EmitResult result = compilation.Emit(outputAssemblyFile);
 
-            if (!result.Success)
-            {
-                return new Tuple<Boolean, IEnumerable<Diagnostic>>(false, result.Diagnostics);
-            }
-            else
-            {
-                //assembly = Assembly.LoadFrom(outputAssemblyFile);
-
-                return new Tuple<Boolean, IEnumerable<Diagnostic>>(true, result.Diagnostics);
-            }
-
+            return new Tuple<bool, IEnumerable<Diagnostic>>(result.Success, result.Diagnostics);
         }
 
         [Obsolete("Net 4.8 ONLY", true)]
