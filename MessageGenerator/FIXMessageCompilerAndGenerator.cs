@@ -84,7 +84,7 @@ namespace MessageGenerator
                         System.Reflection.MethodInfo saveXMLMethod = typeof(FileHelpers).GetMethod("SaveXmlFile_FIX");
                         if (saveXMLMethod.IsGenericMethod)
                             saveXMLMethod = saveXMLMethod.MakeGenericMethod(objectType);
-                        var invokeMethodSaveXmlFile = saveXMLMethod.Invoke(objectType, new object[] { documentObj, filename, outputLocation });
+                        var invokeMethodSaveXmlFile = saveXMLMethod.Invoke(objectType, [documentObj, filename, outputLocation]);
 
                         Console.WriteLine(string.Format("\t {0}", "OK"));
                     }

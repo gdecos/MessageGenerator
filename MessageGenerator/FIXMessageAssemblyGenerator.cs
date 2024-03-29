@@ -79,7 +79,7 @@ namespace MessageGenerator
                         System.Reflection.MethodInfo methodSaveJSON = typeof(FileHelpers).GetMethod("SaveJSONFile");
                         if (methodSaveJSON.IsGenericMethod)
                             methodSaveJSON = methodSaveJSON.MakeGenericMethod(allTypes.GetType());
-                        var invokeMethodSaveJSONFile = methodSaveJSON.Invoke(allTypes, new object[] { allTypes, filenameJson, fileLocationTypesInfoJSON });
+                        var invokeMethodSaveJSONFile = methodSaveJSON.Invoke(allTypes, [allTypes, filenameJson, fileLocationTypesInfoJSON]);
 
                         Console.WriteLine(string.Format("\t {0}", "OK"));
                     }
