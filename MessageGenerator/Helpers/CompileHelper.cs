@@ -30,6 +30,7 @@ namespace MessageGenerator.Helpers
                 MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.dll"),
                 MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Private.Xml.dll"),
                 MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.XmlSerializer.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.Serialization.dll"),
             ];
 
             //foreach (var r in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)!.Split(Path.PathSeparator))
@@ -77,6 +78,7 @@ namespace MessageGenerator.Helpers
                 MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.dll"),
                 MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Private.Xml.dll"),
                 MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.XmlSerializer.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.Serialization.dll"),
             ];
 
             //foreach (var r in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)!.Split(Path.PathSeparator))

@@ -34,6 +34,9 @@ namespace MessageGenerator
                         !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\nvlp", StringComparison.OrdinalIgnoreCase)
                      ));
 
+
+            //files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "pain_001_001_10.cs", SearchOption.AllDirectories).ToList();
+
             var outputLocation = $@"{_filesBaseLocation}\{_xmlOutputFileLocation}";
             if (!System.IO.Directory.Exists(outputLocation))
             {
@@ -44,7 +47,7 @@ namespace MessageGenerator
 
             int idx = 0;
 
-            foreach (string file in files)
+            foreach (string file in files.OrderBy(o=>o))
             {
                 string fileContents = System.IO.File.ReadAllText(file);
 
@@ -62,7 +65,7 @@ namespace MessageGenerator
                         Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
                     }
 
-                    throw new Exception("Complie Error");
+                    throw new Exception("Compile Error");
                 }
                 else
                 {
@@ -72,14 +75,14 @@ namespace MessageGenerator
 
                     var entryPoint = AssemblyHelper.GetDocumentTypes(assembly);
 
-                    Console.WriteLine(string.Format("\t {0}", "Creating Instance"));
-                    Console.WriteLine(string.Format("\t {0}", entryPoint.FullName));
+                    Console.WriteLine(string.Format("\t{0}", "Creating Instance"));
+                    Console.WriteLine(string.Format("\t{0}", entryPoint.FullName));
                     string filename = entryPoint.FullName.Replace(".DOCUMENT", "").ToString();
                     filename = string.Concat(filename, "-", Guid.NewGuid(), "_", String.Format("{0:yyyyMMdd_hhmmss_ttttt}", DateTime.Now));
 
                     var myObj = Activator.CreateInstance(entryPoint);
 
-                    Console.WriteLine(string.Format("\t {0}", filename));
+                    Console.WriteLine(string.Format("\t{0}", filename));
 
                     try
                     {
@@ -95,11 +98,11 @@ namespace MessageGenerator
                             saveXMLMethod = saveXMLMethod.MakeGenericMethod(objectType);
                         var invokeMethodSaveXmlFile = saveXMLMethod.Invoke(objectType, new object[] { documentObj, filename, outputLocation });
 
-                        Console.WriteLine(string.Format("\t {0}", "OK"));
+                        Console.WriteLine(string.Format("\t{0}", "OK"));
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
+                        Console.WriteLine(string.Format("\t{0}", "***ERROR***"));
                         //throw ex;
                     }
 

@@ -55,7 +55,7 @@ namespace MessageGenerator
                         Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
                     }
 
-                    throw new Exception("Complie Error");
+                    throw new Exception("Compile Error");
                 }
                 else
                 {
