@@ -24,6 +24,20 @@ namespace MessageGenerator
             folderPath = configurationRoot.GetSection("FileLocationSettings").GetValue<string>("SwiftMXOutputLocation")!;
 
             /************************************************************************************************/
+            /*
+             * 
+             XSLTC /settings:script+ /class:SwiftMTTransform MessageViewer.xslt
+
+                XslCompiledTransform xslt = new XslCompiledTransform();
+                xslt.Load(typeof(Transform));
+                
+                To dynamically link to the compiled assembly, replace
+                xslt.Load(System.Reflection.Assembly.Load("Transform").GetType("Transform"));  
+
+            */
+            /************************************************************************************************/
+
+            /************************************************************************************************/
             // Not Finished
             // generates xml info files based on enriched schemas (ISO 20022). 
             // these can be used for Tag Names and descriptiopns as well as to list tags by message type
@@ -47,7 +61,7 @@ namespace MessageGenerator
             // MX - compiles at runtime and generates assemblies
             /* NOTE : After this - RUN ProcessAsseblies BAT to create serializers*/
             var mxMessageAssemblyGenerator = new MXMessageAssemblyGenerator();
-            //mxMessageAssemblyGenerator.Run();
+            mxMessageAssemblyGenerator.Run();
 
             //return;
             /************************************************************************************************/
@@ -56,7 +70,7 @@ namespace MessageGenerator
             // FIX - compiles at runtime and generates assemblies
             /* NOTE : After this - RUN ProcessAsseblies BAT to create serializers*/
             var fiMessageAssemblyGenerator = new FIXMessageAssemblyGenerator();
-            //fiMessageAssemblyGenerator.Run();
+            fiMessageAssemblyGenerator.Run();
 
             //return;
             /************************************************************************************************/
@@ -66,7 +80,7 @@ namespace MessageGenerator
             //compiles at runtime and generates full message (rnd)
 
             var fixGenerator = new FIXMessageCompilerAndGenerator();
-            fixGenerator.Run();
+            //fixGenerator.Run();
 
             //return;
             /************************************************************************************************/
@@ -87,7 +101,7 @@ namespace MessageGenerator
 
             var nvlpGenerator = new NVLPMessageCompilerAndGenerator();
             nvlpGenerator.Run();
-
+            
             //return;
             /************************************************************************************************/
 

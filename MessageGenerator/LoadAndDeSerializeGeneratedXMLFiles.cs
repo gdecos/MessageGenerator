@@ -27,6 +27,8 @@ namespace MessageGenerator
         {
             List<string> files = Directory.GetFiles($@"{_filesBaseLocation}\{_xmlFileLocation}", "*.xml", SearchOption.AllDirectories).ToList().OrderBy(x => x).ToList();
 
+            files = Directory.GetFiles($@"{_filesBaseLocation}\{_xmlFileLocation}\2024_04_14", "*.xml", SearchOption.AllDirectories).ToList().OrderBy(x => x).ToList();
+            
             Console.WriteLine($"XML Total Files: {files.Count}");
 
             int idx = 0;

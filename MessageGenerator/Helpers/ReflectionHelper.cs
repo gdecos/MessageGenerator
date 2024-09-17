@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -10,6 +12,20 @@ namespace MessageGenerator.Helpers
     public static class ReflectionHelper
     {
         private static string RootNameSpace = string.Empty;
+
+        private static string DeclaringTypeName = string.Empty;
+        private static string ReturnTypeName = string.Empty;
+        private static string ReturnTypeNameFull = string.Empty;
+        private static string ReturnParamName = string.Empty;
+        private static List<PropertyInfo> ReturnParams;
+        private static string currentTypeName;
+        private static string currentTypeFullName;
+        private static string currentTypeElementName;
+        private static string currentPropertyName;
+        private static string currentPropertyFullName;
+        private static string currentPropertyDeclaringTypeName;
+        private static string currentPropertyDeclaringTypeFullName;
+
         public static T GetDocument<T>()
         {
             T DocumentObj = ReflectionHelper.Create<T>();
@@ -25,13 +41,33 @@ namespace MessageGenerator.Helpers
             if (namespaceAttempt != null)
             {
                 var nsArg = namespaceAttempt.NamedArguments.Where(w => w.MemberName == "Namespace").FirstOrDefault();
-
-                if (nsArg != null && nsArg.TypedValue != null)
-                {
-                    RootNameSpace = nsArg.TypedValue.ToString()?.Trim('"');
-
-                }
+                RootNameSpace = nsArg.TypedValue.ToString()?.Trim('"');
             }
+
+            MethodInfo[] methodInfo = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+            DeclaringTypeName = methodInfo[0].DeclaringType.Name;
+            ReturnTypeName = methodInfo[0].ReturnType.Name;
+            ReturnTypeNameFull = methodInfo[0].ReturnType.FullName;
+            ReturnParamName = type.GetProperties()[0].Name;
+            ReturnParams = type.GetProperties()?.ToList();
+
+            Console.WriteLine("\t {0}", type.FullName);
+            Console.WriteLine("\t {0}", new String('_', 100));
+
+            foreach (var prop in type.GetProperties())
+            {
+                var prop1 = prop.Name;
+                var prop2 = prop.PropertyType.Name;
+                var prop3 = prop.PropertyType.FullName;
+                Console.WriteLine("\t\t {0}\r\n\t\t {1}\r\n\t\t {2}", prop1, prop2, prop3);
+            }
+
+            Console.WriteLine("\t{0}", new String('_', 100));
+
+            Console.WriteLine("\t {0}\r\n\t {1}\r\n\t {2}\r\n\t {3} - [{4}]", type.FullName,  DeclaringTypeName, ReturnParamName, ReturnTypeName, ReturnTypeNameFull);
+
+            Console.WriteLine("\t{0}", new String('-', 100));
 
             return (T)Create(type);
         }
@@ -163,7 +199,6 @@ namespace MessageGenerator.Helpers
                     newAttr.InnerText = "val for Attribute Here";
                     mainDocNode.Attributes.Append(newAttr);
 
-
                     xmlDocSPack.AppendChild(mainDocNode);
 
                     return mainDocNode;
@@ -250,6 +285,8 @@ namespace MessageGenerator.Helpers
 
                         if (att_item.Type.FullName == "System.String")
                         {
+                            currentPropertyFullName = obj.GetType().FullName;
+                            currentPropertyName = obj.GetType().Name;
                             item.SetValue(obj, Convert.ChangeType("TEXT - " + obj.GetType().FullName.Split('.').Last(), item.PropertyType));
                         }
                         else if (att_item.Type.FullName == "System.DateTime")
@@ -304,6 +341,10 @@ namespace MessageGenerator.Helpers
                         }
                         else
                         {
+                            currentTypeName = att_item.Type.Name;
+                            currentTypeFullName = att_item.Type.FullName;
+                            currentTypeElementName = att_item.ElementName;
+
                             item.SetValue(obj, Create(att_item.Type, att_item.ElementName));
                         }
 
@@ -345,6 +386,8 @@ namespace MessageGenerator.Helpers
                                 //items list could be a string
                                 if (att_item.Type.ToString() == "System.String")
                                 {
+                                    currentPropertyFullName = obj.GetType().FullName;
+                                    currentPropertyName = obj.GetType().Name;
                                     var itemObj = Convert.ChangeType("TEXT - " + att_item.ElementName, att_item.Type);
                                     objList.SetValue(itemObj, i);
                                 }
@@ -394,6 +437,10 @@ namespace MessageGenerator.Helpers
         {
             foreach (var property in properties)
             {
+                currentPropertyName = property.Name;
+                currentPropertyDeclaringTypeName = property.DeclaringType.Name;
+                currentPropertyDeclaringTypeFullName = property.DeclaringType.FullName;
+
                 var propertyType = property.PropertyType;
 
                 if (propertyType.IsClass
@@ -449,6 +496,10 @@ namespace MessageGenerator.Helpers
                                     if (att_item.Type.IsClass && string.IsNullOrEmpty(att_item.Type.Namespace)
                                     || (!att_item.Type.Namespace.Equals("System") && !att_item.Type.Namespace.StartsWith("System.")))
                                     {
+                                        currentTypeName = att_item.Type.Name;
+                                        currentTypeFullName = att_item.Type.FullName;
+                                        currentTypeElementName = att_item.ElementName;
+
                                         p.SetValue(o, Create(att_item.Type, att_item.ElementName));
                                     }
                                 }
@@ -461,6 +512,8 @@ namespace MessageGenerator.Helpers
 
                             if (p.PropertyType.Name == "String")
                             {
+                                currentPropertyFullName = o.GetType().FullName;
+                                currentPropertyName = o.GetType().Name;
                                 p.SetValue(o, Convert.ChangeType("TEXT - " + o.GetType().FullName.Split('.').Last(), p.PropertyType), null);
                             }
                             else
@@ -484,6 +537,8 @@ namespace MessageGenerator.Helpers
 
                                     if (att_item.Type.FullName == "System.String")
                                     {
+                                        currentPropertyFullName = o.GetType().FullName;
+                                        currentPropertyName = o.GetType().Name;
                                         p.SetValue(o, Convert.ChangeType("TEXT - " + o.GetType().FullName.Split('.').Last(), p.PropertyType), null);
                                     }
                                     else if (att_item.Type.FullName == "System.DateTime")
@@ -540,6 +595,9 @@ namespace MessageGenerator.Helpers
                                     }
                                     else
                                     {
+                                        currentTypeName = att_item.Type.Name;
+                                        currentTypeFullName = att_item.Type.FullName;
+                                        currentTypeElementName = att_item.ElementName;
                                         p.SetValue(o, Create(att_item.Type, att_item.ElementName), null);
                                     }
                                 }
@@ -560,10 +618,19 @@ namespace MessageGenerator.Helpers
                     {
                         case "System.String":
                             var child = new String('*', 3) + " " + property.Name + " " + property.DeclaringType.Name + " " + new String('*', 3);
-                            property.SetValue(obj, child);
+                            
+                            if (property.Name == "NbOfTxs" ||   property.Name.Contains("NbOfTxs") || property.DeclaringType.Name.Contains("NbOfTxs")
+                                || property.Name.Contains("NumberOfTransactions") || property.DeclaringType.Name.Contains("NumberOfTransactions"))
+                            {
+                                Attribute[] testAttribs = Attribute.GetCustomAttributes(property, typeof(System.Xml.Serialization.XmlElementAttribute));
+                            }
+
+                            if (property.CanWrite)
+                                property.SetValue(obj, child);
                             break;
                         case "System.String[]":
-                            property.SetValue(obj, new string[] {
+                            if (property.CanWrite)
+                                property.SetValue(obj, new string[] {
                                 new String('*', 3) + " " + property.Name + " " + property.DeclaringType.Name + " " + new String('*', 3) + " 1",
                                 new String('*', 3) + " " + property.Name + " " + property.DeclaringType.Name + " " + new String('*', 3) + " 2"});
                             break;
@@ -640,6 +707,8 @@ namespace MessageGenerator.Helpers
 
                                     if (att_item.Type.FullName == "System.String")
                                     {
+                                        currentPropertyFullName = obj.GetType().FullName;
+                                        currentPropertyName = obj.GetType().Name;
                                         property.SetValue(obj, Convert.ChangeType("TEXT - " + obj.GetType().FullName.Split('.').Last(), property.PropertyType), null);
                                     }
                                     else if (att_item.Type.FullName == "System.DateTime")
@@ -748,8 +817,13 @@ namespace MessageGenerator.Helpers
 
                             //CHECK THIS
 
-                            var sampleHeader = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_02_20_0849\Swift.ISO20022.APPLICATIONHEADER.v10.ApplicationHeader-20240220 084911 PM.xml";
-                            var sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_02_20_0849\Swift.ISO20022.ACMT.v006_001_02.Document-20240220 084922 PM.xml";
+                            var sampleHeader = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.APPLICATIONHEADER.v10.ApplicationHeader-bdd3d1f0-46a1-4301-8753-16772632911e_20240316_084058_AM.xml";
+                            sampleHeader = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.HEAD.v001_001_01.BusinessApplicationHeaderV01-417f23f2-0932-48ba-b66e-c20caa365617_20240316_084748_AM.xml";
+                           
+                            var sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.ACMT.v006_001_02.Document-3f4d7a4e-8065-4fdb-8308-6084e8d9e2b5_20240316_084109_AM.xml";
+                            sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.PAIN.v002_001_13.Document-e1280440-4a09-4782-bd08-75a4b9e2e797_20240316_084426_AM.xml";
+                            sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.PAIN.v001_001_11.Document-7330d81e-5de4-4916-8cb3-59514205a470_20240316_084424_AM.xml";
+
                             if (property.Name == "Hdr")
                             {
                                 /*
@@ -779,10 +853,21 @@ namespace MessageGenerator.Helpers
                                 //newAttr.InnerText = "New Attribute Value";
                                 //mainDocNode.Attributes.Append(newAttr);
 
-                                xmlDocSPack.AppendChild(mainDocNode);
+                                var sampleHdrXmlDoc = new XmlDocument();
+                                sampleHdrXmlDoc.Load(sampleHeader);
 
-                                xmlDocSPack = new XmlDocument();
-                                xmlDocSPack.Load(sampleHeader);
+                                // error diff contect
+                                //mainDocNode.AppendChild(sampleHdrXmlDoc.DocumentElement);
+                                // creates AppHrd/AppHdr nested
+                                //mainDocNode.AppendChild(xmlDocSPack.ImportNode(sampleHdrXmlDoc.DocumentElement, true));
+                                // creates correct
+                                xmlDocSPack.AppendChild(xmlDocSPack.ImportNode(sampleHdrXmlDoc.DocumentElement, true));
+
+                                //xmlDocSPack.AppendChild(mainDocNode);
+
+                                //old code working - same naemspaces generated
+                                //xmlDocSPack = new XmlDocument();
+                                //xmlDocSPack.Load(sampleHeader);
 
                             }
                             else if (property.Name == "Doc")
@@ -798,14 +883,30 @@ namespace MessageGenerator.Helpers
                                 //newAttr.InnerText = "New Attribute Value";
                                 //mainDocNode.Attributes.Append(newAttr);
 
-                                xmlDocSPack.AppendChild(mainDocNode);
+                                var sampleDocMessageXmlDoc = new XmlDocument();
+                                sampleDocMessageXmlDoc.Load(sampleMessage);
 
-                                xmlDocSPack = new XmlDocument();
-                                xmlDocSPack.Load(sampleMessage);
+                                xmlDocSPack.AppendChild(xmlDocSPack.ImportNode(sampleDocMessageXmlDoc.DocumentElement, true));
+
+                                //worked
+                                //xmlDocSPack.AppendChild(mainDocNode);
+
+                                //xmlDocSPack = new XmlDocument();
+                                //xmlDocSPack.Load(sampleMessage);
                             }
                             else
                             {
+                                XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("ENVELOPE"), namespaceURI: RootNameSpace);
 
+                                var innerObj = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("AddInfo"), namespaceURI: RootNameSpace);
+                                var newAttr = xmlDocSPack.CreateAttribute("Attribute1");
+                                newAttr.InnerText = "New Attribute Value";
+                                innerObj.Attributes.Append(newAttr);
+
+                                mainDocNode.AppendChild(innerObj);
+
+                                xmlDocSPack.AppendChild(mainDocNode);
+                                var item = "NOT HDR OR Doc";
                             }
 
                             property.SetValue(obj, xmlDocSPack.DocumentElement);
@@ -871,7 +972,8 @@ namespace MessageGenerator.Helpers
 
                             break;
                         case "System.Boolean":
-                            property.SetValue(obj, true);
+                            if (property.CanWrite)
+                                property.SetValue(obj, true);
 
                             //DYNAMICALLY SETTING THE ABOVE
                             Attribute[] attribsb = Attribute.GetCustomAttributes(property, typeof(System.Xml.Serialization.XmlElementAttribute));
@@ -891,13 +993,16 @@ namespace MessageGenerator.Helpers
                                 property.SetValue(obj, (Int64)0);
                             break;
                         case "System.Decimal":
-                            property.SetValue(obj, new decimal(1.0));
+                            if (property.CanWrite)
+                                property.SetValue(obj, new decimal(1.0));
                             break;
                         case "System.Decimal[]":
-                            property.SetValue(obj, new decimal[] { new decimal(1.0), new decimal(2.0) });
+                            if (property.CanWrite)
+                                property.SetValue(obj, new decimal[] { new decimal(1.0), new decimal(2.0) });
                             break;
                         case "System.Byte[]":
-                            property.SetValue(obj, Encoding.ASCII.GetBytes("BYTE DATA HERE"));
+                            if (property.CanWrite)
+                                property.SetValue(obj, Encoding.ASCII.GetBytes("BYTE DATA HERE"));
                             break;
                         case "System.Byte[][]":
 
@@ -911,7 +1016,8 @@ namespace MessageGenerator.Helpers
                             break;
                         // OCT 2020
                         case "System.Boolean[]":
-                            property.SetValue(obj, new bool[] { true, false });
+                            if (property.CanWrite)
+                                property.SetValue(obj, new bool[] { true, false });
                             break;
                         case "System.DayOfWeek":
                             if (property.CanWrite)
