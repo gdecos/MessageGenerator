@@ -1,7 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
-using MessageGenerator.Helpers;
+﻿using MessageGenerator.Helpers;
+using Microsoft.CodeAnalysis;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,15 +8,15 @@ using System.Reflection;
 
 namespace MessageGenerator
 {
-    internal class HEADMessageCompilerAndGenerator
+    internal class HEADMessageCompilerAndGenerator_XcGen
     {
         private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\ISO-20022";
         private readonly string _csFilesLocation = $@"cs";
-        private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}";
+        private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}_xcgen_";
         private readonly int _maxFilesToGenerate = 5;
 
-        public HEADMessageCompilerAndGenerator() => new HEADMessageCompilerAndGenerator(_filesBaseLocation);
-        public HEADMessageCompilerAndGenerator(string filesBaseLocation)
+        public HEADMessageCompilerAndGenerator_XcGen() => new HEADMessageCompilerAndGenerator(_filesBaseLocation);
+        public HEADMessageCompilerAndGenerator_XcGen(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
         }

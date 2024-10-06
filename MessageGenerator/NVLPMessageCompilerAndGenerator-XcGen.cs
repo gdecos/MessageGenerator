@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using MessageGenerator.Helpers;
 using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,39 +8,30 @@ using System.Reflection;
 
 namespace MessageGenerator
 {
-    internal class HEADMessageCompilerAndGenerator
+    internal class NVLPMessageCompilerAndGenerator_XcGen
     {
         private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\ISO-20022";
-        private readonly string _csFilesLocation = $@"cs";
-        private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}";
+        private readonly string _csFilesLocation = $@"cs-xcgen";
+        private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}_xcgen_";
         private readonly int _maxFilesToGenerate = 5;
 
-        public HEADMessageCompilerAndGenerator() => new HEADMessageCompilerAndGenerator(_filesBaseLocation);
-        public HEADMessageCompilerAndGenerator(string filesBaseLocation)
+        public NVLPMessageCompilerAndGenerator_XcGen() => new NVLPMessageCompilerAndGenerator(_filesBaseLocation);
+        public NVLPMessageCompilerAndGenerator_XcGen(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
         }
 
         public void Run()
         {
-            List<string> files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*head*.cs", SearchOption.AllDirectories).ToList();
-            files.AddRange(Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*ahv10*.cs", SearchOption.AllDirectories));
-
-            //files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "head_002_001_01.cs", SearchOption.AllDirectories).ToList();
+            List<string> files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*nvlp*.cs", SearchOption.AllDirectories).ToList();
 
             var outputLocation = $@"{_filesBaseLocation}\{_xmlOutputFileLocation}";
             if (!System.IO.Directory.Exists(outputLocation))
             {
                 System.IO.Directory.CreateDirectory(outputLocation);
             }
-            else
-            {
-                Console.WriteLine($"Deleting Existing (Re-RUN");
-                Directory.EnumerateFiles($@"{_filesBaseLocation}\{_xmlOutputFileLocation}", "*head*.xml").ToList().ForEach(x => File.Delete(x));
-                Directory.EnumerateFiles($@"{_filesBaseLocation}\{_xmlOutputFileLocation}", "*ahv10*.xml").ToList().ForEach(x => File.Delete(x));
-            }
 
-            Console.WriteLine($"HEAD Total Files: {files.Count}");
+            Console.WriteLine($"NVLP Total Files: {files.Count}");
 
             int idx = 0;
 
@@ -71,7 +61,7 @@ namespace MessageGenerator
 
                     Assembly assembly = compileResults.Item2;
 
-                    var entryPoint = AssemblyHelper.GetBAHEADERTypes(assembly);
+                    var entryPoint = AssemblyHelper.GetNVLPTypes(assembly);
 
                     Console.WriteLine(string.Format("\t {0}", "Creating Instance"));
                     Console.WriteLine(string.Format("\t {0}", entryPoint.FullName));
@@ -101,7 +91,7 @@ namespace MessageGenerator
                     catch (Exception ex)
                     {
                         Console.WriteLine(string.Format("\t {0}", "***ERROR***"));
-                        throw ex;
+                        //throw ex;
                     }
                 }
             }

@@ -15,6 +15,7 @@ namespace MessageGenerator.Helpers
                         where t.IsClass && (
                            t.Name == "BusinessMessageEnvelopeV01"
                            || t.Name.StartsWith("BusinessMessageEnvelopeV")
+                           || t.Name.StartsWith("BusinessMessageEnvelope")
                            )
                         select t;
 
@@ -29,6 +30,10 @@ namespace MessageGenerator.Helpers
                             || t.Name == "BusinessApplicationHeaderV01"
                             || t.Name == "BusinessApplicationHeaderV02"
                             || t.Name == "BusinessApplicationHeaderV03"
+                            || t.Name == "BusinessApplicationHeaderV04"
+                            || t.Name.StartsWith("BusinessApplicationHeaderV")
+                            || t.Name.StartsWith("BusinessApplicationHeader")
+                            || t.Name.StartsWith("BusinessFileHeader")
                            )
                         select t;
 
@@ -55,7 +60,11 @@ namespace MessageGenerator.Helpers
                         || t.Name == "BusinessApplicationHeaderV01"
                         || t.Name == "BusinessApplicationHeaderV02"
                         || t.Name == "BusinessApplicationHeaderV03"
+                        || t.Name == "BusinessApplicationHeaderV04"
+                        || t.Name.StartsWith("BusinessApplicationHeader")
+                        || t.Name.StartsWith("BusinessFileHeader")
                         || t.Name == "BusinessMessageEnvelopeV01"
+                        || t.Name == "BusinessMessageEnvelopeV02"
                         || t.Name == "ApplicationHeader"
                            )
                         select t;

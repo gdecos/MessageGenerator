@@ -8,15 +8,15 @@ using System.Reflection;
 
 namespace MessageGenerator
 {
-    internal class DocumentMessageCompilerAndGenerator
+    internal class DocumentMessageCompilerAndGenerator_XcGen
     {
         private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\ISO-20022";
-        private readonly string _csFilesLocation = $@"cs";
-        private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}";
+        private readonly string _csFilesLocation = $@"cs-xcgen";
+        private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}_xcgen_";
         private readonly int _maxFilesToGenerate = 5;
 
-        public DocumentMessageCompilerAndGenerator() => new DocumentMessageCompilerAndGenerator(_filesBaseLocation);
-        public DocumentMessageCompilerAndGenerator(string filesBaseLocation)
+        public DocumentMessageCompilerAndGenerator_XcGen() => new DocumentMessageCompilerAndGenerator(_filesBaseLocation);
+        public DocumentMessageCompilerAndGenerator_XcGen(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
         }
@@ -29,13 +29,13 @@ namespace MessageGenerator
                 Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}")
                     .Where(name =>
                         !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\$ahV10", StringComparison.OrdinalIgnoreCase) &&
-                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\ahV10", StringComparison.OrdinalIgnoreCase) &&
-                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\head", StringComparison.OrdinalIgnoreCase) &&
-                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\nvlp", StringComparison.OrdinalIgnoreCase)
+                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\OramaTech.Swift.Iso20022.ahV10", StringComparison.OrdinalIgnoreCase) &&
+                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\OramaTech.Swift.Iso20022.head", StringComparison.OrdinalIgnoreCase) &&
+                        !name.StartsWith($@"{_filesBaseLocation}\{_csFilesLocation}\OramaTech.Swift.Iso20022.nvlp", StringComparison.OrdinalIgnoreCase)
                      ));
 
-            //files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "pain_001_001_12.cs", SearchOption.AllDirectories).ToList();
-            //files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "tsmt_003_001_03.cs", SearchOption.AllDirectories).ToList();
+            //files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*Pain.v001_001_12.cs", SearchOption.AllDirectories).ToList();
+            //files = Directory.GetFiles($@"{_filesBaseLocation}\{_csFilesLocation}", "*Tsmt.v003_001_03.cs", SearchOption.AllDirectories).ToList();
 
             var outputLocation = $@"{_filesBaseLocation}\{_xmlOutputFileLocation}";
             if (!System.IO.Directory.Exists(outputLocation))

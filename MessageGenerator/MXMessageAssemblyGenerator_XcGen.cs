@@ -8,14 +8,14 @@ using System.Reflection;
 
 namespace MessageGenerator
 {
-    internal class MXMessageAssemblyGenerator
+    internal class MXMessageAssemblyGenerator_XcGen
     {
         private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\ISO-20022";
-        private readonly string _csFilesLocation = $@"cs";
+        private readonly string _csFilesLocation = $@"cs-xcgen";
         private readonly int _maxFilesToGenerate = 5;
 
-        public MXMessageAssemblyGenerator() => new MXMessageAssemblyGenerator(_filesBaseLocation);
-        public MXMessageAssemblyGenerator(string filesBaseLocation)
+        public MXMessageAssemblyGenerator_XcGen() => new MXMessageAssemblyGenerator_XcGen(_filesBaseLocation);
+        public MXMessageAssemblyGenerator_XcGen(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
         }
@@ -42,7 +42,10 @@ namespace MessageGenerator
                 string fileContents = System.IO.File.ReadAllText(file);
                 string csFileContents = fileContents;
 
-                var OutputAssemblyName = fi.Name.Replace(fi.Extension, string.Empty).Replace(".", "");
+                var OutputAssemblyName = fi.Name.Replace("OramaTech.Swift.Iso20022.", "").Replace(fi.Extension, string.Empty).Replace(".", "_");
+
+                //OramaTech.Swift.Iso20022.
+
                 var OutputAssemblyFile = $@"{_filesBaseLocation}\{_csFilesLocation}\Assemblies\{OutputAssemblyName}.dll";
                 string fileLocationTypesInfoJSON = $@"{_filesBaseLocation}\{_csFilesLocation}\TypesInfoJson";
 

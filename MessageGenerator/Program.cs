@@ -61,7 +61,10 @@ namespace MessageGenerator
             // MX - compiles at runtime and generates assemblies
             /* NOTE : After this - RUN ProcessAsseblies BAT to create serializers*/
             var mxMessageAssemblyGenerator = new MXMessageAssemblyGenerator();
-            mxMessageAssemblyGenerator.Run();
+//            mxMessageAssemblyGenerator.Run();
+
+            var mxMessageAssemblyGenerator_XcGen = new MXMessageAssemblyGenerator_XcGen();
+//            mxMessageAssemblyGenerator_XcGen.Run();
 
             //return;
             /************************************************************************************************/
@@ -70,7 +73,7 @@ namespace MessageGenerator
             // FIX - compiles at runtime and generates assemblies
             /* NOTE : After this - RUN ProcessAsseblies BAT to create serializers*/
             var fiMessageAssemblyGenerator = new FIXMessageAssemblyGenerator();
-            fiMessageAssemblyGenerator.Run();
+//            fiMessageAssemblyGenerator.Run();
 
             //return;
             /************************************************************************************************/
@@ -89,7 +92,7 @@ namespace MessageGenerator
             //dynamically deserializes the messages created by the code CompileAllFiles
 
             var loadAndDeSerializeGeneratedXMLFiles = new LoadAndDeSerializeGeneratedXMLFiles();
-            loadAndDeSerializeGeneratedXMLFiles.Run();
+//            loadAndDeSerializeGeneratedXMLFiles.Run();
 
             //return;
             /************************************************************************************************/
@@ -101,7 +104,9 @@ namespace MessageGenerator
 
             var nvlpGenerator = new NVLPMessageCompilerAndGenerator();
             nvlpGenerator.Run();
-            
+            var nvlpGenerator_XcGen = new NVLPMessageCompilerAndGenerator_XcGen();
+            nvlpGenerator_XcGen.Run();
+
             //return;
             /************************************************************************************************/
 
@@ -112,6 +117,8 @@ namespace MessageGenerator
 
             var headGenerator = new HEADMessageCompilerAndGenerator();
             headGenerator.Run();
+            var headGenerator_XcGen = new HEADMessageCompilerAndGenerator_XcGen();
+            headGenerator_XcGen.Run();
 
             //return;
             /************************************************************************************************/
@@ -123,6 +130,8 @@ namespace MessageGenerator
 
             var documentGenerator = new DocumentMessageCompilerAndGenerator();
             documentGenerator.Run();
+            var documentGenerator_XcGen = new DocumentMessageCompilerAndGenerator_XcGen();
+            documentGenerator_XcGen.Run();
 
             //return;
             /************************************************************************************************/
@@ -133,7 +142,7 @@ namespace MessageGenerator
             //processes the cs files in the libs folder by generating an xml file and saving it in the destination
 
             var localLibDocumentGenerator = new LocalLibraryMessageCompilerAndGenerator();
-            localLibDocumentGenerator.Run();
+            //localLibDocumentGenerator.Run();
 
             /************************************************************************************************/
         }

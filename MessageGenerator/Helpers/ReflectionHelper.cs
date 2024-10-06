@@ -435,6 +435,17 @@ namespace MessageGenerator.Helpers
 
         private static void SetProperties(System.Reflection.PropertyInfo[] properties, object obj)
         {
+            if (obj != null)
+            {
+                if (
+                    obj.GetType().FullName.Contains("CtrlSum") || properties.Any(a => a.Name.Contains("CtrlSum"))
+                )
+                {
+                    var here123 = 1234;
+
+                }
+            }
+
             foreach (var property in properties)
             {
                 currentPropertyName = property.Name;
@@ -443,7 +454,57 @@ namespace MessageGenerator.Helpers
 
                 var propertyType = property.PropertyType;
 
-                if (propertyType.IsClass
+                //-		$exception	{"Type: System.Nullable`1[[System.DateTimeOffset, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]] Not handled"}	System.Exception
+                if (propertyType.FullName.Contains("System.Nullable`1"))
+                {
+                    var child = Create(propertyType);
+
+                    var nullableObject = Activator.CreateInstance(propertyType);
+                    var nullableObjectCreated = Create(propertyType, propertyType.FullName);
+
+                    var nullableType = Nullable.GetUnderlyingType(propertyType);
+                    var val = Create(nullableType);
+
+                    //var o = Convert.ChangeType(child, child.GetType()); - NULL
+                    //property.SetValue(obj, child);
+                    property.SetValue(obj, val);
+                }
+                else if (propertyType.FullName.Contains("System.Collections.ObjectModel.Collection`1"))
+                {
+                    var child = Create(propertyType);
+                    //DYNAMICALLY SETTING THE ABOVE
+                    var o = Convert.ChangeType(child, child.GetType());
+
+                    var p = o.GetType().GetProperty("Item");
+
+                    var objCollection = Activator.CreateInstance(o.GetType());
+
+                    var propertiesCollection = o.GetType().GetProperties();
+
+                    if (propertiesCollection == null) return ;
+
+                    foreach (var itemsCollectionProperty in propertiesCollection)
+                    {
+                        if (itemsCollectionProperty.CanWrite)
+                        {
+                            var newInnerChild = Create(itemsCollectionProperty.PropertyType);
+                            //objCollection.GetType().GetProperty("Item").SetValue(objCollection, newInnerChild, new object[] { 0 });
+                            //objCollection.GetType().GetProperty("Item").SetValue(objCollection, newInnerChild);
+                            // objCollection.GetType().GetMethod("set_Item").Invoke(objCollection, new object[] { 0, newInnerChild });
+                            //objCollection.GetType().GetMethod("set_Item").Invoke(objCollection, new object[] { 0, newInnerChild });
+                            //(objCollection as ICollection<object>).Add(newInnerChild);
+
+                            objCollection.GetType().GetMethod("Add").Invoke(objCollection, new object[] { newInnerChild });
+                        }
+                    }
+
+                    property.SetValue(obj, objCollection);
+                }
+
+                /* ********************************************************************************************************************** */
+                /* ********************************************************************************************************************** */
+                /* ********************************************************************************************************************** */
+                else if (propertyType.IsClass
                     && string.IsNullOrEmpty(propertyType.Namespace)
                     || (!propertyType.Namespace.Equals("System")
                         && !propertyType.Namespace.StartsWith("System.")))
@@ -453,7 +514,12 @@ namespace MessageGenerator.Helpers
                     {
                         var e = Enum.GetValues(propertyType);
                         //
-                        property.SetValue(obj, e.GetValue(new Random().Next(0, e.Length))); //e.Length - 1
+                        if (property.CanWrite)
+                            property.SetValue(obj, e.GetValue(new Random().Next(0, e.Length))); //e.Length - 1
+                        else
+                        {
+//                           property.SetValue(obj, e.GetValue(new Random().Next(0, e.Length))); //e.Length - 1
+                        }
                     }
                     else
                     {
@@ -751,7 +817,6 @@ namespace MessageGenerator.Helpers
                                     {
                                         property.SetValue(obj, true);
 
-
                                         var ItemElementName = obj.GetType().GetProperty("ItemElementName");
                                         if (ItemElementName != null)
                                         {
@@ -984,17 +1049,21 @@ namespace MessageGenerator.Helpers
                             }
 
                             break;
+                        case "System.Int16":
+                            if (property.CanWrite)
+                                property.SetValue(obj, (Int16)1);
+                            break;
                         case "System.Int32":
                             if (property.CanWrite)
-                                property.SetValue(obj, (Int32)0);
+                                property.SetValue(obj, (Int32)2);
                             break;
                         case "System.Int64":
                             if (property.CanWrite)
-                                property.SetValue(obj, (Int64)0);
+                                property.SetValue(obj, (Int64)3);
                             break;
                         case "System.Decimal":
                             if (property.CanWrite)
-                                property.SetValue(obj, new decimal(1.0));
+                                property.SetValue(obj, new decimal(1.5));
                             break;
                         case "System.Decimal[]":
                             if (property.CanWrite)
@@ -1027,18 +1096,57 @@ namespace MessageGenerator.Helpers
                             if (property.CanWrite)
                                 property.SetValue(obj, System.DateTimeKind.Utc);
                             break;
+                        case "System.DateTimeOffset":
+                            if (property.CanWrite)
+                            {
+                                DateTime time1 = DateTime.UtcNow;
+                                DateTimeOffset time2 = time1;
+                                property.SetValue(obj, time2);
+                            }
+                            break;
                         case "System.TimeSpan":
                             if (property.CanWrite)
                                 property.SetValue(obj, DateTime.UtcNow);
                             break;
                         case "System.Byte":
                             if (property.CanWrite)
-                                property.SetValue(obj, Byte.MaxValue);
+                                property.SetValue(obj, byte.MaxValue);
+                            break;
+                        case "System.SByte":
+                            if (property.CanWrite)
+                                property.SetValue(obj, sbyte.MaxValue);
                             break;
                         //FIX
                         case "System.Single":
                             if (property.CanWrite)
-                                property.SetValue(obj, new Single());
+                                property.SetValue(obj, Single.MaxValue);
+                            break;
+                        case "System.Xml.XmlElement[]":
+
+                            XmlDocument xmlElementDoc1 = new XmlDocument();
+                            XmlNode xmlElementDocNode1 = xmlElementDoc1.CreateXmlDeclaration("1.0", "", null);
+                            xmlElementDoc1.AppendChild(xmlElementDocNode1);
+
+                            var elem1 = xmlElementDoc1.CreateElement(System.Xml.XmlConvert.EncodeName(property.Name + "_1"), namespaceURI: RootNameSpace);
+                            var newAttr1forElem = xmlElementDoc1.CreateAttribute("Attribute1");
+                            newAttr1forElem.InnerText = "New Attribute Value 1";
+                            elem1.Attributes.Append(newAttr1forElem);
+
+                            var elem2 = xmlElementDoc1.CreateElement(System.Xml.XmlConvert.EncodeName(property.Name + "_2"), namespaceURI: RootNameSpace);
+                            newAttr1forElem = xmlElementDoc1.CreateAttribute("Attribute2");
+                            newAttr1forElem.InnerText = "New Attribute Value 2";
+                            elem2.Attributes.Append(newAttr1forElem);
+
+                            var xmlElementArray = new System.Xml.XmlElement[]
+                            {
+                                elem1,
+                                elem2
+                            };
+
+                            if (property.CanWrite)
+                                property.SetValue(obj, xmlElementArray);
+
+                            //throw new NotImplementedException("test");
                             break;
                         default:
                             throw new Exception(string.Format("Type: {0} Not handled", propertyType.FullName));
