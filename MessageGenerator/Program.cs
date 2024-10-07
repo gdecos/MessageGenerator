@@ -74,6 +74,8 @@ namespace MessageGenerator
             /* NOTE : After this - RUN ProcessAsseblies BAT to create serializers*/
             var fiMessageAssemblyGenerator = new FIXMessageAssemblyGenerator();
 //            fiMessageAssemblyGenerator.Run();
+            var fiMessageAssemblyGenerator_XcGen = new FIXMessageAssemblyGenerator_XcGen();
+ //           fiMessageAssemblyGenerator_XcGen.Run();
 
             //return;
             /************************************************************************************************/
@@ -82,8 +84,11 @@ namespace MessageGenerator
             /************************************************************************************************/
             //compiles at runtime and generates full message (rnd)
 
+            //!! finished - needs hardcoded root creation 
             var fixGenerator = new FIXMessageCompilerAndGenerator();
-            //fixGenerator.Run();
+//            fixGenerator.Run();
+            var fixGenerator_XcGen = new FIXMessageCompilerAndGenerator_XcGen();
+//            fixGenerator_XcGen.Run();
 
             //return;
             /************************************************************************************************/
@@ -97,28 +102,14 @@ namespace MessageGenerator
             //return;
             /************************************************************************************************/
 
-
-            // BIZ MESSAGE - NVLP
-            /************************************************************************************************/
-            //compiles at runtime and generates full message (rnd)
-
-            var nvlpGenerator = new NVLPMessageCompilerAndGenerator();
-            nvlpGenerator.Run();
-            var nvlpGenerator_XcGen = new NVLPMessageCompilerAndGenerator_XcGen();
-            nvlpGenerator_XcGen.Run();
-
-            //return;
-            /************************************************************************************************/
-
-
             // HEAD MESSAGE - BUSINESS APPLICATION HEADER 
             /************************************************************************************************/
             //compiles at runtime and generates full message (rnd)
 
             var headGenerator = new HEADMessageCompilerAndGenerator();
-            headGenerator.Run();
+//            headGenerator.Run();
             var headGenerator_XcGen = new HEADMessageCompilerAndGenerator_XcGen();
-            headGenerator_XcGen.Run();
+//            headGenerator_XcGen.Run();
 
             //return;
             /************************************************************************************************/
@@ -129,9 +120,22 @@ namespace MessageGenerator
             //compiles at runtime and generates full message (rnd)
 
             var documentGenerator = new DocumentMessageCompilerAndGenerator();
-            documentGenerator.Run();
+//            documentGenerator.Run();
             var documentGenerator_XcGen = new DocumentMessageCompilerAndGenerator_XcGen();
-            documentGenerator_XcGen.Run();
+//            documentGenerator_XcGen.Run();
+
+            //return;
+            /************************************************************************************************/
+
+
+            // BIZ MESSAGE - NVLP
+            /************************************************************************************************/
+            //compiles at runtime and generates full message (rnd)
+
+            var nvlpGenerator = new NVLPMessageCompilerAndGenerator();
+//            nvlpGenerator.Run();
+            var nvlpGenerator_XcGen = new NVLPMessageCompilerAndGenerator_XcGen();
+//            nvlpGenerator_XcGen.Run();
 
             //return;
             /************************************************************************************************/

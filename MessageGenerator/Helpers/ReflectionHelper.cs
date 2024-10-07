@@ -221,7 +221,7 @@ namespace MessageGenerator.Helpers
                     //get rest of properties
                     var otherproperties2 = properties.Where(p => p.Name != "Item" && p.Name != "ItemElementName").ToArray();
                     if (otherproperties2.Length > 0)
-                        SetProperties(otherproperties2, obj);
+                        SetProperties(otherproperties2, obj, objectElementName);
 
                     Attribute[] attribs2 = Attribute.GetCustomAttributes(item, typeof(System.Xml.Serialization.XmlElementAttribute));
                     //var enumValues2 = System.Enum.GetValues(item.PropertyType);
@@ -257,7 +257,7 @@ namespace MessageGenerator.Helpers
                     var restOfProperties = properties.Where(p => p.Name != "Item" & p.Name != "ItemElementName").ToArray();
                     if (restOfProperties.Length > 0)
                     {
-                        SetProperties(restOfProperties, obj);
+                        SetProperties(restOfProperties, obj, objectElementName);
                     }
 
                     Attribute[] attribs = Attribute.GetCustomAttributes(item, typeof(System.Xml.Serialization.XmlElementAttribute));
@@ -362,7 +362,7 @@ namespace MessageGenerator.Helpers
                         var restOfProperties = properties.Where(p => p.Name != "Items" & p.Name != "ItemsElementName").ToArray();
                         if (restOfProperties.Length > 0)
                         {
-                            SetProperties(restOfProperties, obj);
+                            SetProperties(restOfProperties, obj, objectElementName);
                         }
 
                         Attribute[] attribs = Attribute.GetCustomAttributes(items, typeof(System.Xml.Serialization.XmlElementAttribute));
@@ -426,14 +426,14 @@ namespace MessageGenerator.Helpers
                     }
                     else
                     {
-                        SetProperties(properties, obj);
+                        SetProperties(properties, obj, objectElementName);
                     }
                 }
                 return obj;
             }
         }
 
-        private static void SetProperties(System.Reflection.PropertyInfo[] properties, object obj)
+        private static void SetProperties(System.Reflection.PropertyInfo[] properties, object obj, string objectElementName)
         {
             if (obj != null)
             {
@@ -497,8 +497,8 @@ namespace MessageGenerator.Helpers
                             objCollection.GetType().GetMethod("Add").Invoke(objCollection, new object[] { newInnerChild });
                         }
                     }
-
-                    property.SetValue(obj, objCollection);
+                    if (property.CanWrite)
+                        property.SetValue(obj, objCollection);
                 }
 
                 /* ********************************************************************************************************************** */
@@ -523,7 +523,7 @@ namespace MessageGenerator.Helpers
                     }
                     else
                     {
-                        var child = Create(propertyType);
+                        var child = Create(propertyType, property.Name);
 
                         //DYNAMICALLY SETTING THE ABOVE
                         var o = Convert.ChangeType(child, child.GetType());
@@ -882,14 +882,16 @@ namespace MessageGenerator.Helpers
 
                             //CHECK THIS
 
-                            var sampleHeader = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.APPLICATIONHEADER.v10.ApplicationHeader-bdd3d1f0-46a1-4301-8753-16772632911e_20240316_084058_AM.xml";
-                            sampleHeader = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.HEAD.v001_001_01.BusinessApplicationHeaderV01-417f23f2-0932-48ba-b66e-c20caa365617_20240316_084748_AM.xml";
+                            var sampleHeader = @"D:\Swift Messaging\_ouput\ISO-20022\xml-samples\NVLP-Head";
+                            sampleHeader = @"D:\Swift Messaging\_ouput\ISO-20022\xml-samples\NVLP-Head\OramaTech.Swift.Iso20022.Head.v001_001_04.BusinessApplicationHeader8-7acdf286-92f6-4f32-b62f-ee82b39210d8_20241006_105635_PM.xml";
                            
-                            var sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.ACMT.v006_001_02.Document-3f4d7a4e-8065-4fdb-8308-6084e8d9e2b5_20240316_084109_AM.xml";
-                            sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.PAIN.v002_001_13.Document-e1280440-4a09-4782-bd08-75a4b9e2e797_20240316_084426_AM.xml";
-                            sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml\2024_03_16\Swift.ISO20022.PAIN.v001_001_11.Document-7330d81e-5de4-4916-8cb3-59514205a470_20240316_084424_AM.xml";
+                            var sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml-samples\NVLP-Msg";
+                            sampleMessage = @"D:\Swift Messaging\_ouput\ISO-20022\xml-samples\NVLP-Msg\ACH PAIN File_OK.xml";
 
-                            if (property.Name == "Hdr")
+                            if (
+                                property.Name == "Hdr"
+                                || (property.Name == "Any" && objectElementName == "Hdr")
+                                )
                             {
                                 /*
                                 XNamespace headNS = "urn:iso:std:iso:20022:tech:xsd:head.001.001.03";
@@ -919,7 +921,7 @@ namespace MessageGenerator.Helpers
                                 //mainDocNode.Attributes.Append(newAttr);
 
                                 var sampleHdrXmlDoc = new XmlDocument();
-                                sampleHdrXmlDoc.Load(sampleHeader);
+                                 sampleHdrXmlDoc.Load(sampleHeader);
 
                                 // error diff contect
                                 //mainDocNode.AppendChild(sampleHdrXmlDoc.DocumentElement);
@@ -935,7 +937,10 @@ namespace MessageGenerator.Helpers
                                 //xmlDocSPack.Load(sampleHeader);
 
                             }
-                            else if (property.Name == "Doc")
+                            else if (
+                                property.Name == "Doc"
+                                || (property.Name == "Any" && objectElementName == "Doc")
+                                )
                             {
                                 //Document
                                 //urn:swift:xsd:pain.998.001.03
@@ -961,17 +966,17 @@ namespace MessageGenerator.Helpers
                             }
                             else
                             {
-                                XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("ENVELOPE"), namespaceURI: RootNameSpace);
+                                var item = "NOT HDR OR Doc";
+                                XmlElement mainDocNode = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName($"Envelope_{property.Name}"), namespaceURI: RootNameSpace);
 
-                                var innerObj = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("AddInfo"), namespaceURI: RootNameSpace);
-                                var newAttr = xmlDocSPack.CreateAttribute("Attribute1");
-                                newAttr.InnerText = "New Attribute Value";
+                                var innerObj = xmlDocSPack.CreateElement(System.Xml.XmlConvert.EncodeName("Custom_AddInfo"), namespaceURI: RootNameSpace);
+                                var newAttr = xmlDocSPack.CreateAttribute("CustomAttributePropertyName");
+                                newAttr.InnerText = $"{property.Name}-{objectElementName}";
                                 innerObj.Attributes.Append(newAttr);
 
                                 mainDocNode.AppendChild(innerObj);
 
                                 xmlDocSPack.AppendChild(mainDocNode);
-                                var item = "NOT HDR OR Doc";
                             }
 
                             property.SetValue(obj, xmlDocSPack.DocumentElement);

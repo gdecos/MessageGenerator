@@ -8,15 +8,15 @@ using System.Reflection;
 
 namespace MessageGenerator
 {
-    internal class FIXMessageCompilerAndGenerator
+    internal class FIXMessageCompilerAndGenerator_XcGen
     {
         private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\FIX";
-        private readonly string _csFilesLocation = $@"cs";
-        private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}";
+        private readonly string _csFilesLocation = $@"cs-xcgen";
+        private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}_xcgen_";
         private readonly int _maxFilesToGenerate = 5;
 
-        public FIXMessageCompilerAndGenerator() => new FIXMessageCompilerAndGenerator(_filesBaseLocation);
-        public FIXMessageCompilerAndGenerator(string filesBaseLocation)
+        public FIXMessageCompilerAndGenerator_XcGen() => new FIXMessageCompilerAndGenerator_XcGen(_filesBaseLocation);
+        public FIXMessageCompilerAndGenerator_XcGen(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
         }
@@ -60,7 +60,7 @@ namespace MessageGenerator
                     additionalFileContents.Add(allText);
                 }
 
-                var compileResults = CompileHelper.CompileInMemoryFromSource(fileContents, [..additionalFileContents]);
+                var compileResults = CompileHelper.CompileInMemoryFromSource(fileContents, [.. additionalFileContents]);
 
                 if (compileResults.Item1 == false)
                 {
@@ -74,7 +74,7 @@ namespace MessageGenerator
                         Console.Error.WriteLine("{0}: {1}", diagnostic.Id, diagnostic.GetMessage());
                     }
 
-                    throw new Exception("Complie Error");
+                    throw new Exception("Compile Error");
                 }
                 else
                 {
@@ -82,127 +82,120 @@ namespace MessageGenerator
 
                     Assembly assembly = compileResults.Item2;
 
-                    // gettign all using the xcgen approach
                     var allEntryPointTypes = AssemblyHelper.GetAllFIXDocumentTypesForXcGen(assembly);
                     Type entryPoint = null;
                     string genericEntryPoint = string.Empty;
 
-                    var zzz1 = allEntryPointTypes.Where(w => w.FullName.Contains("Allocation")).ToList();
-                    var zzz2 = allEntryPointTypes.Where(w => w.FullName.Contains("Instruction")).ToList();
-                    var zzz3 = allEntryPointTypes.Where(w => w.Name.Contains("_message_t") && w.FullName.Contains("Ioi", StringComparison.InvariantCultureIgnoreCase)).ToList();
-
-                    if (fi.Name == "Fixml-Allocation-Base-4-4-Fia-1-1.cs")
+                    if (fi.Name == "OramaTech.Fix.Fixml.Allocation_Base_4_4_Fia_1_1.cs")
                     {
-                        //"AllocationInstruction_message_t" 
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "AllocationInstruction_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "AllocationInstructionMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Collateral-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Collateral_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "CollateralRequest_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "CollateralRequestMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Confirmation-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Confirmation_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "Confirmation_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "ConfirmationMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Crossorders-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Crossorders_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "NewOrderCross_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "NewOrderCrossMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Dds-Eod-Occ-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Dds_Eod_Occ_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.FullName == "OramaTech.Fix.Fixml.Dds_Eod_Occ_1.DDSEODMessage_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "DdseodMessageMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Dds-Sod-Occ-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Dds_Sod_Occ_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.FullName == "OramaTech.Fix.Fixml.Dds_Sod_Occ_1.DDSSODMessage_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "DdssodMessageMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Indications-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Indications_Base_4_4_Fia_1_1.cs")
                     {
-                        //OramaTech.Fix.Fixml.Occ.IOI_message_t
-                        entryPoint = allEntryPointTypes.Where(w => w.FullName == "OramaTech.Fix.Fixml.Occ.IOI_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "IoiMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Listorders-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Listorders_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "NewOrderList_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "NewOrderListMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Marginrequirements-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Marginrequirements_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "MarginRequirementReport_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "MarginRequirementReportMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Marketdata-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Marketdata_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "MarketDataRequest_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "MarketDataRequestMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Multilegorders-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Multilegorders_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "NewOrderMultileg_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "NewOrderMultilegMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Newsevents-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Newsevents_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "News_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "NewsMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Order-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Order_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "ExecutionReport_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "ExecutionReportMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Positions-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Positions_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "PositionMaintenanceRequest_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "PositionMaintenanceRequestMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Positions-Base-4-4-Fia-1-1-Orig.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Positions_Base_4_4_Fia_1_1_Orig.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "PositionMaintenanceRequest_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "PositionMaintenanceRequestMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Positions-Impl-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Positions_Impl_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "ContraryIntentionReport_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "ContraryIntentionReportMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Quotation-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Quotation_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "QuoteRequest_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "QuoteRequestMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Registration-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Registration_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "RegistrationInstructions_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "RegistrationInstructionsMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Securitystatus-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Securitystatus_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "SecurityDefinitionRequest_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "SecurityDefinitionRequestMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Securitystatus-Impl-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Securitystatus_Impl_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "SecurityListUpdate_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "SecurityListUpdateMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Settlement-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Settlement_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "SettlementInstructions_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "SettlementInstructionsMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Tradecapture-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Tradecapture_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "TradeCaptureReportRequest_message_t").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "TradeCaptureReportRequestMessageT").First();
                     }
-                    else if (fi.Name == "Fixml-Components-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Components_Base_4_4_Fia_1_1.cs")
                     {
-                        entryPoint = allEntryPointTypes.Where(w => w.Name == "FIXML").First();
+                        entryPoint = allEntryPointTypes.Where(w => w.Name == "Fixml").First();
                     }
-                    else if (fi.Name == "Fixml-Components-Impl-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Components_Impl_4_4_Fia_1_1.cs")
                     {
                         genericEntryPoint = "Components";
                         //continue;
                     }
-                    else if (fi.Name == "Fixml-Datatypes-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Datatypes_4_4_Fia_1_1.cs")
                     {
                         genericEntryPoint = "Datatypes";
                         //continue;
                     }
-                    else if (fi.Name == "Fixml-Fields-Base-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Fields_Base_4_4_Fia_1_1.cs")
                     {
                         //entryPoint = allEntryPointTypes.Where(w => w.Name == "HopT").First();
 
                         genericEntryPoint = "FieldsBase";
                         //continue;
                     }
-                    else if (fi.Name == "Fixml-Fields-Impl-4-4-Fia-1-1.cs")
+                    else if (fi.Name == "OramaTech.Fix.Fixml.Fields_Impl_4_4_Fia_1_1.cs")
                     {
                         genericEntryPoint = "FieldsImpl";
                         //continue;
@@ -211,7 +204,6 @@ namespace MessageGenerator
                     {
 
                     }
-
 
                     var entryPointType = string.Empty;
 

@@ -30,6 +30,11 @@ namespace MessageGenerator
             {
                 System.IO.Directory.CreateDirectory(outputLocation);
             }
+            else
+            {
+                Console.WriteLine($"Deleting Existing (Re-RUN");
+                Directory.EnumerateFiles($@"{_filesBaseLocation}\{_xmlOutputFileLocation}", "*nvlp*.xml").ToList().ForEach(x => File.Delete(x));
+            }
 
             Console.WriteLine($"NVLP Total Files: {files.Count}");
 

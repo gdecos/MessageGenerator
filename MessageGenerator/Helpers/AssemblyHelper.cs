@@ -74,11 +74,24 @@ namespace MessageGenerator.Helpers
 
         public static IEnumerable<Type> GetAllFIXDocumentTypes(Assembly assembly)
         {
+            var allTypes = assembly.GetTypes();
+
             var types = from t in assembly.GetTypes()
                         where t.IsClass && (
                         1 == 2
                         || t.Name == "FIXML"
                         )
+                        select t;
+
+            return types;
+        }
+
+        public static IEnumerable<Type> GetAllFIXDocumentTypesForXcGen(Assembly assembly)
+        {
+            var allTypes = assembly.GetTypes();
+
+            var types = from t in assembly.GetTypes()
+                        where t.IsClass
                         select t;
 
             return types;

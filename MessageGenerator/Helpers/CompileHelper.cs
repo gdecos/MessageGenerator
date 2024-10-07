@@ -14,6 +14,66 @@ namespace MessageGenerator.Helpers
     {
         public CompileHelper() { }
 
+        internal static Tuple<Boolean, Assembly, IEnumerable<Diagnostic>> CompileInMemoryFromSource(string fileContents, string[] additionalFileContents)
+        {
+            Assembly assembly = null!;
+            var runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+            string assemblyName = Path.GetRandomFileName();
+
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContents);
+
+            List<SyntaxTree> additionalSyntaxTrees = new List<SyntaxTree>();
+            foreach (var file in additionalFileContents)
+            {
+                var additionalSyntaxTree = CSharpSyntaxTree.ParseText(file);
+                additionalSyntaxTrees.Add(additionalSyntaxTree);
+            }
+
+            additionalSyntaxTrees.Insert(0, syntaxTree);
+
+            MetadataReference[] references =
+            [
+                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Runtime.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.ComponentModel.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.ComponentModel.Primitives.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.ComponentModel.Annotations.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Private.Xml.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.XmlSerializer.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.Serialization.dll"),
+            ];
+
+            //foreach (var r in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)!.Split(Path.PathSeparator))
+            //{
+            //    references = references.Append(MetadataReference.CreateFromFile(r)).ToArray();
+            //}
+
+            CSharpCompilation compilation = CSharpCompilation.Create(
+                assemblyName,
+                syntaxTrees: additionalSyntaxTrees,
+                references: references,
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+                                .WithOptimizationLevel(OptimizationLevel.Release));
+
+            using (var ms = new MemoryStream())
+            {
+                EmitResult result = compilation.Emit(ms);
+
+                if (!result.Success)
+                {
+                    return new Tuple<bool, Assembly, IEnumerable<Diagnostic>>(result.Success, assembly, result.Diagnostics);
+                }
+                else
+                {
+                    ms.Seek(0, SeekOrigin.Begin);
+                    assembly = Assembly.Load(ms.ToArray());
+
+                    return new Tuple<bool, Assembly, IEnumerable<Diagnostic>>(result.Success, assembly, result.Diagnostics);
+                }
+            }
+        }
+
         internal static Tuple<Boolean, Assembly, IEnumerable<Diagnostic>> CompileInMemoryFromSource(string fileContents)
         {
             Assembly assembly = null!;
@@ -62,6 +122,52 @@ namespace MessageGenerator.Helpers
                     return new Tuple<bool, Assembly, IEnumerable<Diagnostic>>(result.Success, assembly, result.Diagnostics);
                 }
             }
+        }
+
+        internal static Tuple<Boolean, IEnumerable<Diagnostic>> CompileToAssemblyFromSource(string fileContents, string[] additionalFileContents, string mainClass, string outputAssemblyFile)
+        {
+            var runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+            string assemblyName = mainClass;
+
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContents);
+
+            List<SyntaxTree> additionalSyntaxTrees = new List<SyntaxTree>();
+            foreach (var file in additionalFileContents)
+            {
+                var additionalSyntaxTree = CSharpSyntaxTree.ParseText(file);
+                additionalSyntaxTrees.Add(additionalSyntaxTree);
+            }
+
+            additionalSyntaxTrees.Insert(0, syntaxTree);
+
+            MetadataReference[] references =
+            [
+                MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Runtime.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.ComponentModel.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.ComponentModel.Primitives.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.ComponentModel.Annotations.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Private.Xml.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.XmlSerializer.dll"),
+                MetadataReference.CreateFromFile(@$"{runtimeDirectory}\System.Xml.Serialization.dll"),
+            ];
+
+            //foreach (var r in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!)!.Split(Path.PathSeparator))
+            //{
+            //    references = references.Append(MetadataReference.CreateFromFile(r)).ToArray();
+            //}
+
+            CSharpCompilation compilation = CSharpCompilation.Create(
+                assemblyName,
+                syntaxTrees: additionalSyntaxTrees,
+                references: references,
+                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary) { }
+                                .WithOptimizationLevel(OptimizationLevel.Release));
+
+            EmitResult result = compilation.Emit(outputAssemblyFile);
+
+            return new Tuple<bool, IEnumerable<Diagnostic>>(result.Success, result.Diagnostics);
         }
 
         internal static Tuple<Boolean, IEnumerable<Diagnostic>> CompileToAssemblyFromSource(string fileContents, string mainClass, string outputAssemblyFile)

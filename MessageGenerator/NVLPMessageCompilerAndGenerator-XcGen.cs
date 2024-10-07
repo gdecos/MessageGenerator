@@ -15,7 +15,7 @@ namespace MessageGenerator
         private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}_xcgen_";
         private readonly int _maxFilesToGenerate = 5;
 
-        public NVLPMessageCompilerAndGenerator_XcGen() => new NVLPMessageCompilerAndGenerator(_filesBaseLocation);
+        public NVLPMessageCompilerAndGenerator_XcGen() => new NVLPMessageCompilerAndGenerator_XcGen(_filesBaseLocation);
         public NVLPMessageCompilerAndGenerator_XcGen(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;
@@ -29,6 +29,11 @@ namespace MessageGenerator
             if (!System.IO.Directory.Exists(outputLocation))
             {
                 System.IO.Directory.CreateDirectory(outputLocation);
+            }
+            else
+            {
+                Console.WriteLine($"Deleting Existing (Re-RUN");
+                Directory.EnumerateFiles($@"{_filesBaseLocation}\{_xmlOutputFileLocation}", "*nvlp*.xml").ToList().ForEach(x => File.Delete(x));
             }
 
             Console.WriteLine($"NVLP Total Files: {files.Count}");

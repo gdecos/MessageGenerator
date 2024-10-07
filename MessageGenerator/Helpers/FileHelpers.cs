@@ -65,11 +65,17 @@ namespace MessageGenerator.Helpers
                 Encoding = Encoding.UTF8,                
             };
 
-            System.Xml.Serialization.XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            System.Xml.Serialization.XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(t.GetType());
             using (System.IO.FileStream file = System.IO.File.Create(outputLocation))
             {
                 xmlSerializer.Serialize(file, t);
             }
+
+            //System.Xml.Serialization.XmlSerializer xmlSerializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            //using (System.IO.FileStream file = System.IO.File.Create(outputLocation))
+            //{
+            //    xmlSerializer.Serialize(file, t);
+            //}
         }
 
         public static void SaveJSONFile<T>(T t, string fileName, string filePath)

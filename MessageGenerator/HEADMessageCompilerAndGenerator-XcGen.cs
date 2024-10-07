@@ -11,11 +11,11 @@ namespace MessageGenerator
     internal class HEADMessageCompilerAndGenerator_XcGen
     {
         private string _filesBaseLocation = @"D:\Swift Messaging\_ouput\ISO-20022";
-        private readonly string _csFilesLocation = $@"cs";
+        private readonly string _csFilesLocation = $@"cs-xcgen";
         private readonly string _xmlOutputFileLocation = $@"xml\{String.Format("{0:yyyy_MM_dd}", DateTime.Now)}_xcgen_";
         private readonly int _maxFilesToGenerate = 5;
 
-        public HEADMessageCompilerAndGenerator_XcGen() => new HEADMessageCompilerAndGenerator(_filesBaseLocation);
+        public HEADMessageCompilerAndGenerator_XcGen() => new HEADMessageCompilerAndGenerator_XcGen(_filesBaseLocation);
         public HEADMessageCompilerAndGenerator_XcGen(string filesBaseLocation)
         {
             _filesBaseLocation = filesBaseLocation;

@@ -43,6 +43,10 @@ namespace MessageGenerator
                 string csFileContents = fileContents;
 
                 var OutputAssemblyName = fi.Name.Replace(fi.Extension, string.Empty).Replace(".", "");
+
+                if (OutputAssemblyName == "$ahv10")
+                    OutputAssemblyName = "Head_10";
+
                 var OutputAssemblyFile = $@"{_filesBaseLocation}\{_csFilesLocation}\Assemblies\{OutputAssemblyName}.dll";
                 string fileLocationTypesInfoJSON = $@"{_filesBaseLocation}\{_csFilesLocation}\TypesInfoJson";
 

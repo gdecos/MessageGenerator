@@ -29,6 +29,11 @@ namespace MessageGenerator
 
             Console.WriteLine($"Total Files: {files.Count}");
 
+            Console.WriteLine($"Deleting Dll's");
+            Directory.EnumerateFiles($@"{_filesBaseLocation}\\{_csFilesLocation}\\Assemblies", "*.dll").ToList().ForEach(x => File.Delete(x));
+            Console.WriteLine($"Deleting Types (JSON)");
+            Directory.EnumerateFiles($@"{_filesBaseLocation}\\{_csFilesLocation}\\TypesInfoJson", "*.json").ToList().ForEach(x => File.Delete(x));
+
             int idx = 0;
 
             foreach (string file in files)
